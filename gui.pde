@@ -33,6 +33,7 @@ public void buttonSD_click(GButton source, GEvent event) { //_CODE_:buttonSD:263
 
 public void buttonExit_click(GButton source, GEvent event) { //_CODE_:buttonExit:988049:
   println("button5 - GButton >> GEvent." + event + " @ " + millis());
+  buttonExit();
 } //_CODE_:buttonExit:988049:
 
 
@@ -50,18 +51,21 @@ public void createGUI(){
   buttonLoad = new GButton(this, 20, 70, 100, 30);
   buttonLoad.setText("Load Setting");
   buttonLoad.addEventHandler(this, "buttonLoad_click");
-  buttonVoice = new GButton(this, 20, 120, 100, 30);
+  buttonVoice = new GButton(this, 230, 20, 100, 30);
   buttonVoice.setText("Voice Tuning");
   buttonVoice.addEventHandler(this, "buttonVoice_click");
-  buttonSD = new GButton(this, 20, 170, 100, 30);
+  buttonSD = new GButton(this, 230, 70, 100, 30);
   buttonSD.setText("Write To Sd Card");
   buttonSD.addEventHandler(this, "buttonSD_click");
-  buttonExit = new GButton(this, 220, 170, 100, 30);
+  buttonExit = new GButton(this, 20, 120, 100, 30);
   buttonExit.setText("Exit");
   buttonExit.addEventHandler(this, "buttonExit_click");
   label1 = new GLabel(this, 130, 0, 90, 30);
   label1.setText("Config Apps");
   label1.setOpaque(false);
+  label2 = new GLabel(this, 220, 150, 120, 20);
+  label2.setTextAlign(GAlign.LEFT, GAlign.MIDDLE);
+  label2.setOpaque(false);
 }
 
 // Variable declarations 
@@ -72,3 +76,4 @@ GButton buttonVoice;
 GButton buttonSD; 
 GButton buttonExit; 
 GLabel label1; 
+GLabel label2; 
