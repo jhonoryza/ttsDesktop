@@ -75,23 +75,46 @@ void loadVoiceSetting() {
   voiceVolume = list[2];
   println("pitch " +voicePitch +" rate " +voiceRate +" volume " +voiceVolume);
 }
+void saveTextFunction(String[] nameKoridor) {
+  String path = sketchPath()+"/data/listKoridor.txt";
+  println(path);
+  String text ="";
+  for (int i=0; i<nameKoridor.length; i++)
+    text += nameKoridor[i] +",";
+  String[] meText = split(text, ",");
+  saveStrings(path, meText);
+  newSettingWindow.close();
+}
 GWindow newSettingWindow;
 GLabel labelText, labela, labelb;
-GButton buttonNext;
-GTextField inputKorNum;
+GButton buttonNext, buttonContinue, buttonBack, buttonSaveConfigText;
+GTextField inputA;
+int newSetSlideNum;
 public void newSettingWizard() {
   newSettingWindow = GWindow.getWindow(this, "New Setting Wizard", 400, 250, 500, 300, JAVA2D); 
   newSettingWindow.noLoop();
   newSettingWindow.setActionOnClose(G4P.CLOSE_WINDOW);
   newSettingWindow.addDrawHandler(this, "win_drawNewSetting");
-
-  inputKorNum = new GTextField(newSettingWindow, 150, 65, 90, 20);
-  inputKorNum.setOpaque(false);
-
+  //media
+  buttonContinue = new GButton(newSettingWindow, newSettingWindow.width-70, newSettingWindow.height-40, 50, 25);
+  buttonContinue.setOpaque(false);
+  buttonContinue.setText("continue");
+  buttonContinue.addEventHandler(this, "buttonContinueHandler");
+  inputA = new GTextField(newSettingWindow, 150, 65, 90, 20);
+  inputA.setOpaque(false);
   buttonNext = new GButton(newSettingWindow, newSettingWindow.width-70, newSettingWindow.height-40, 50, 25);
   buttonNext.setOpaque(false);
   buttonNext.setText("next");
-  
+  buttonNext.addEventHandler(this, "buttonNextHandler");
+  buttonBack = new GButton(newSettingWindow, buttonNext.getX()-buttonNext.getWidth(), newSettingWindow.height-40, 50, 25);
+  buttonBack.setOpaque(false);
+  buttonBack.setText("back");
+  buttonBack.addEventHandler(this, "buttonBackHandler");
+  buttonSaveConfigText = new GButton(newSettingWindow, newSettingWindow.width-70, newSettingWindow.height-40, 50, 25);
+  buttonSaveConfigText.setOpaque(false);
+  buttonSaveConfigText.setText("save");
+  buttonSaveConfigText.addEventHandler(this, "buttonSaveConfigTextHandler");
+  newSetSlideNum = 0;
   newSettingWindow.loop();
 }
 //handler window
@@ -110,6 +133,9 @@ synchronized public void win_drawVoiceSetting(PApplet appc, GWinData data) {
   appc.textSize(10);
   appc.text(sketchPath() +"/data/voice.cfg", 0, appc.height-7);
 }
+int korNum = 0, slideNum = 0;
+String[] namaKoridor;
+boolean clickSave = false, clickNext = false, clickBack = false, clickContinue = false;
 synchronized public void win_drawNewSetting(PApplet appc, GWinData data) {
   appc.background(240);
   appc.noStroke();
@@ -120,8 +146,54 @@ synchronized public void win_drawNewSetting(PApplet appc, GWinData data) {
   appc.fill(0);
   appc.textSize(18);
   appc.text("Welcome to the new setting wizard", 20, 30);
-  appc.textSize(12);
-  appc.text("Input Jumlah Koridor :", 20, 80);
+
+
+  if (clickSave) {
+    clickSave = false;
+  } else if (clickNext) {
+    if (newSetSlideNum == 1) {
+      namaKoridor[slideNum-1] = inputA.getText();
+      printArray(namaKoridor);
+    }
+    if (slideNum >= korNum)
+      saveTextFunction(namaKoridor);
+    else
+      slideNum += 1;
+    clickNext = false;
+    inputA.setText("");
+  } else if (clickBack) {
+    clickBack = false;
+    inputA.setText("");
+    if (slideNum <= 0)
+      newSetSlideNum = 0;
+    else
+      slideNum -= 1;
+  } else if (clickContinue) {
+    clickContinue = false;
+    korNum = int(inputA.getText());
+    namaKoridor = new String[korNum];
+    newSetSlideNum += 1;
+    slideNum += 1;
+    inputA.setText("");
+  }
+  switch(newSetSlideNum) {
+  case 0:
+    appc.textSize(12);
+    appc.text("Input Jumlah Koridor :", 20, 80);
+    buttonNext.setVisible(false);
+    buttonBack.setVisible(false);
+    buttonSaveConfigText.setVisible(false);
+    buttonContinue.setVisible(true);
+    break;
+  case 1:
+    appc.textSize(12);
+    appc.text("Nama Koridor " +slideNum +" :", 20, 80);
+    buttonNext.setVisible(true);
+    buttonBack.setVisible(true);
+    buttonContinue.setVisible(false);
+    buttonSaveConfigText.setVisible(false);
+    break;
+  }
 }
 //handler button
 public void buttonSaveVoiceConfiguration(GButton source, GEvent event) {
@@ -135,4 +207,16 @@ public void buttonSaveVoiceConfiguration(GButton source, GEvent event) {
 }
 public void buttonExit() {
   exit();
+}
+public void buttonContinueHandler(GButton source, GEvent event) {
+  clickContinue = true;
+}
+public void buttonNextHandler(GButton source, GEvent event) {
+  clickNext = true;
+}
+public void buttonBackHandler(GButton source, GEvent event) {
+  clickBack = true;
+}
+public void buttonSaveConfigTextHandler(GButton source, GEvent event) {
+  clickSave = true;
 }
