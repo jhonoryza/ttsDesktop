@@ -94,6 +94,7 @@ public void newSettingWizard() {
   optYes.setText("ya");
   optYes.setOpaque(false);
   optYes.setFont(GuiUbu11);
+  optYes.setSelected(true);
   optNo = new GOption(newSettingWindow, optYes.getX()+60, 90, 60, 30);
   optNo.addEventHandler(this, "optNoHandler");
   optNo.setText("tidak");
@@ -102,17 +103,17 @@ public void newSettingWizard() {
   optGroup = new GToggleGroup();
   optGroup.addControl(optYes);
   optGroup.addControl(optNo);
-  in1 = new GTextField(newSettingWindow, 10, 120, 260, 20, G4P.SCROLLBARS_NONE);
+  in1 = new GTextField(newSettingWindow, 10, 140, 260, 20, G4P.SCROLLBARS_NONE);
   in1.setVisible(false);
   in1.setOpaque(false);
   in1.addEventHandler(this, "in1Handler");
-  in1.setPromptText("jumlah halte (jalur pergi)");
+  in1.setPromptText("total halte (jalur pergi)");
   in1.setFont(GuiUbu11);
-  in2 = new GTextField(newSettingWindow, 10, 150, 260, 20, G4P.SCROLLBARS_NONE);
+  in2 = new GTextField(newSettingWindow, 10, in1.getY()+50, 260, 20, G4P.SCROLLBARS_NONE);
   in2.setVisible(false);
   in2.setOpaque(false);
   in2.addEventHandler(this, "in2Handler");
-  in2.setPromptText("jumlah halte (jalur pulang)");
+  in2.setPromptText("total halte (jalur pulang)");
   in2.setFont(GuiUbu11);
   tab = new GTabManager();
   tab.addControls(inputA, in1, in2);
@@ -122,6 +123,10 @@ public void newSettingWizard() {
   editHalte.setVisible(false);
   editHalte.addEventHandler(this, "editHalteHandler");
   editHalte.setFont(GuiUbu11);
+  //value init
+  korNum = 0; 
+  slideNum = 0; 
+  newSetSlideNum = 0;
   newSettingWindow.loop();
 }
 
@@ -191,7 +196,7 @@ void createListHalte() {
 
   GLabel labelKoridorTitle = new GLabel(newHalteWindow, newHalteWindow.width - 120, 10, 110, newHalteWindow.height - 60);
   labelKoridorTitle.setOpaque(false);
-  labelKoridorTitle.setLocalColorScheme(int(random(0,7)));
+  labelKoridorTitle.setLocalColorScheme(int(random(0, 7)));
   labelKoridorTitle.setTextAlign(GAlign.CENTER, GAlign.TOP);
   labelKoridorTitle.setFont(GuiUbu14);
   labelKoridorTitle.setText("koridor " +myKoridor[slideNum-1].namaKoridor);
@@ -202,9 +207,32 @@ void createListHalte() {
   saveHalte.addEventHandler(this, "saveHalteHandler");
   saveHalte.setFont(GuiUbu11);
 
+  //load pre-data to input
+  if (myKoridor[slideNum-1].namaHalteGo.size() <= myKoridor[slideNum-1].totalHalteGo) {
+    for (int i=0; i<myKoridor[slideNum-1].namaHalteGo.size(); i++)
+      inputHalteGo[i].setText(myKoridor[slideNum-1].namaHalteGo.get(i));
+  } else if (myKoridor[slideNum-1].namaHalteGo.size() > myKoridor[slideNum-1].totalHalteGo) {
+    for (int i=0; i<myKoridor[slideNum-1].totalHalteGo; i++)
+      inputHalteGo[i].setText(myKoridor[slideNum-1].namaHalteGo.get(i));
+  }
+  if (myKoridor[slideNum-1].namaHalteBack.size() <= myKoridor[slideNum-1].totalHalteBack) {
+    for (int i=0; i<myKoridor[slideNum-1].namaHalteBack.size(); i++)
+      inputHalteBack[i].setText(myKoridor[slideNum-1].namaHalteBack.get(i));
+  } else if (myKoridor[slideNum-1].namaHalteBack.size() > myKoridor[slideNum-1].totalHalteBack) {
+    for (int i=0; i<myKoridor[slideNum-1].totalHalteBack; i++)
+      inputHalteBack[i].setText(myKoridor[slideNum-1].namaHalteBack.get(i));
+  }
+
   newHalteWindow.loop();
 }
-
+//load pre data new setting wizard
+public void loadPreDataNewWizard() {
+  inputA.setText(myKoridor[slideNum-1].namaKoridor);
+  if (myKoridor[slideNum-1].choice)
+    yesOptionFunction();
+  else
+    noOptionFunction();
+}
 //button function
 public void continueButtonFuntion() {
   korNum = int(inputA.getText());
@@ -215,26 +243,33 @@ public void continueButtonFuntion() {
     slideNum += 1;
     myKoridor[slideNum-1] = new koridor();
     inputA.setPromptText("Nama Koridor " +slideNum);
+    loadPreDataNewWizard();
   }
-  inputA.setText("");
 }
 public void nextButtonFuntion() {
-  if (newSetSlideNum == 1) {
-    myKoridor[slideNum] = new koridor();
-    myKoridor[slideNum-1].namaKoridor = inputA.getText();
-    println(myKoridor[slideNum-1].namaKoridor);
-  }
   if (slideNum >= korNum) {
     saveTextFunction();
     newSetSlideNum = 0;
     slideNum = 0;
-  } else
+  } else {
+    if (newSetSlideNum == 1) {
+      myKoridor[slideNum] = new koridor();
+      myKoridor[slideNum-1].namaKoridor = inputA.getText();
+      println(myKoridor[slideNum-1].namaKoridor);
+      if (in2.isVisible()) {
+        myKoridor[slideNum-1].totalHalteGo = int(in1.getText());
+        myKoridor[slideNum-1].totalHalteBack = int(in2.getText());
+      } else {
+        myKoridor[slideNum-1].totalHalteGo = int(in1.getText());
+        myKoridor[slideNum-1].totalHalteBack = int(in1.getText());
+      }
+    }
     slideNum += 1;
-
+    loadPreDataNewWizard();
+  }
   in1.setText(""); 
   in2.setText("");
   inputA.setPromptText("Nama Koridor " +slideNum);
-  inputA.setText("");
 }
 public void backButtonFunction() {
   inputA.setText("");
@@ -245,6 +280,7 @@ public void backButtonFunction() {
     inputA.setPromptText("Input Jumlah Koridor");
   } else {
     inputA.setPromptText("Nama Koridor " +slideNum);
+    loadPreDataNewWizard();
   }
 }
 // option function

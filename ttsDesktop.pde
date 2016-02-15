@@ -44,7 +44,7 @@ public void customGUI() {
 
 //handler window
 int korNum = 0, slideNum = 0, newSetSlideNum = 0;
-koridor[] myKoridor = new koridor[0];
+koridor[] myKoridor;
 synchronized public void win_drawNewSetting(PApplet appc, GWinData data) {
   appc.background(240);
   appc.noStroke();
@@ -72,7 +72,7 @@ synchronized public void win_drawNewSetting(PApplet appc, GWinData data) {
       editHalte.setVisible(false);
     }
   } else if (newSetSlideNum == 1) {
-    appc.text("Input nama koridor", 10, 60);
+    appc.text("Input nama koridor " +slideNum, 10, 60);
     appc.text("Total halte (jalur pergi) == Total halte (jalur pulang) ?", 10, 110);
     if (buttonNext != null && buttonBack != null && buttonContinue != null && optYes != null && optNo != null && in1 != null && in2 != null && editHalte != null) {
       buttonNext.setVisible(true);
@@ -80,6 +80,13 @@ synchronized public void win_drawNewSetting(PApplet appc, GWinData data) {
       buttonContinue.setVisible(false);
       optYes.setVisible(true);
       optNo.setVisible(true);
+      if(in2.isVisible()){
+       appc.text("input total halte (jalur pergi)", 10, 130);
+       appc.text("input total halte (jalur pulang)", 10, 180);
+      }
+      else if(!in2.isVisible()){
+        appc.text("input total halte (jalur pergi) dan (jalur pulang)", 10, 130);
+      }
     }
   }
 }
