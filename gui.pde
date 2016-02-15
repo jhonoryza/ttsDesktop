@@ -15,25 +15,26 @@
  */
 
 public void buttonNew_click(GButton source, GEvent event) { //_CODE_:buttonNew:677724:
-  println("button1 - GButton >> GEvent." + event + " @ " + millis());
+  println("buttonNew clicked");
   newSettingWizard();
 } //_CODE_:buttonNew:677724:
 
 public void buttonLoad_click(GButton source, GEvent event) { //_CODE_:buttonLoad:917085:
-  println("button2 - GButton >> GEvent." + event + " @ " + millis());
+  println("buttonLoad clicked");
+   newSettingWizard();
 } //_CODE_:buttonLoad:917085:
 
 public void buttonVoice_click(GButton source, GEvent event) { //_CODE_:buttonVoice:220763:
-  println("button3 - GButton >> GEvent." + event + " @ " + millis());
+  println("buttonVoice clicked");
   voiceSetting();
 } //_CODE_:buttonVoice:220763:
 
 public void buttonSD_click(GButton source, GEvent event) { //_CODE_:buttonSD:263848:
-  println("button4 - GButton >> GEvent." + event + " @ " + millis());
+  println("buttonSD clicked");
 } //_CODE_:buttonSD:263848:
 
 public void buttonExit_click(GButton source, GEvent event) { //_CODE_:buttonExit:988049:
-  println("button5 - GButton >> GEvent." + event + " @ " + millis());
+  println("buttonExit clicked");
   buttonExit();
 } //_CODE_:buttonExit:988049:
 
@@ -45,8 +46,6 @@ public void createGUI(){
   G4P.messagesEnabled(false);
   G4P.setGlobalColorScheme(8);
   G4P.setCursor(ARROW);
-  //G4P.FAMILY.FONT.("Ubuntu Mono");
-  //G4P.usePre35Fonts();
   surface.setTitle("Configurator");
   buttonNew = new GButton(this, 20, 30, 100, 30);
   buttonNew.setText("New Setting");
