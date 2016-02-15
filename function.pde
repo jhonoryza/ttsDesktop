@@ -45,6 +45,7 @@ void loadVoiceSetting() {
   println("pitch " +voicePitch +" rate " +voiceRate +" volume " +voiceVolume);
 }
 
+PrintWriter output;
 void saveTextFunction() {
   String path = sketchPath()+"/data/listKoridor.txt";
   println(path);
@@ -54,6 +55,34 @@ void saveTextFunction() {
   String[] meText = split(text, ",");
   saveStrings(path, meText);
   newSettingWindow.close();
+
+  output = createWriter(sketchPath() +"/data/config.txt"); 
+  String data = "list koridor : \"";
+  output.println("total koridor : \"" +korNum +"\"");
+  for (int i=0; i<korNum; i++)
+    data += myKoridor[i].namaKoridor +",";
+  data += "\"";
+  output.println(data);
+  for (int i=0; i<korNum; i++) {
+    data = "list halte : \"";
+    output.println("total halte (jalur pergi) koridor "+i +" :\"" +myKoridor[i].totalHalteGo +"\"");
+    for (int j=0; j<myKoridor[i].totalHalteGo; j++) {
+      data += myKoridor[i].namaHalteGo.get(j) +",";
+    }
+    data += "\"";
+    output.println(data);
+    data = "list halte : \"";
+    output.println("total halte (jalur pulang) koridor "+i +" :\"" +myKoridor[i].totalHalteBack +"\"");
+    for (int j=0; j<myKoridor[i].totalHalteBack; j++) {
+      data += myKoridor[i].namaHalteBack.get(j) +",";
+    }
+    data += "\"";
+    output.println(data);
+    data = "";
+  }
+  output.flush(); // Writes the remaining data to the file
+  output.close(); // Finishes the file
+  exit(); // Stops the program
 }
 
 GWindow newSettingWindow;
@@ -223,6 +252,8 @@ void createListHalte() {
       inputHalteBack[i].setText(myKoridor[slideNum-1].namaHalteBack.get(i));
   }
 
+  //add handler to the last input
+  inputHalteBack[myKoridor[slideNum-1].totalHalteBack-1].addEventHandler(this, "halteEnterHandler");
   newHalteWindow.loop();
 }
 //load pre data new setting wizard
@@ -232,6 +263,44 @@ public void loadPreDataNewWizard() {
     yesOptionFunction();
   else
     noOptionFunction();
+}
+//halte edit function
+public void saveCurrentHalte() {
+  if (myKoridor[slideNum-1].namaHalteGo.size() == myKoridor[slideNum-1].totalHalteGo) {
+    //set data 
+    for (int i=0; i<myKoridor[slideNum-1].totalHalteGo; i++)
+      myKoridor[slideNum-1].namaHalteGo.set(i, inputHalteGo[i].getText());
+  } else if (myKoridor[slideNum-1].namaHalteGo.size() < myKoridor[slideNum-1].totalHalteGo) {
+    //remove data then add new data
+    myKoridor[slideNum-1].namaHalteGo.clear();
+    for (int i=0; i<myKoridor[slideNum-1].totalHalteGo; i++)
+      myKoridor[slideNum-1].namaHalteGo.append(inputHalteGo[i].getText());
+  } else if (myKoridor[slideNum-1].namaHalteGo.size() > myKoridor[slideNum-1].totalHalteGo) {
+    //remove data then add new data
+    myKoridor[slideNum-1].namaHalteGo.clear();
+    for (int i=0; i<myKoridor[slideNum-1].totalHalteGo; i++)
+      myKoridor[slideNum-1].namaHalteGo.append(inputHalteGo[i].getText());
+  }
+
+  printArray(myKoridor[slideNum-1].namaHalteGo);
+  if (myKoridor[slideNum-1].namaHalteBack.size() == myKoridor[slideNum-1].totalHalteBack) {
+    //set data 
+    for (int i=0; i<myKoridor[slideNum-1].totalHalteBack; i++)
+      myKoridor[slideNum-1].namaHalteBack.set(i, inputHalteBack[i].getText());
+  } else if (myKoridor[slideNum-1].namaHalteBack.size() < myKoridor[slideNum-1].totalHalteBack) {
+    //remove data then add new data
+    myKoridor[slideNum-1].namaHalteBack.clear();
+    for (int i=0; i<myKoridor[slideNum-1].totalHalteBack; i++)
+      myKoridor[slideNum-1].namaHalteBack.append(inputHalteBack[i].getText());
+  } else if (myKoridor[slideNum-1].namaHalteBack.size() > myKoridor[slideNum-1].totalHalteBack) {
+    //remove data then add new data
+    myKoridor[slideNum-1].namaHalteBack.clear();
+    for (int i=0; i<myKoridor[slideNum-1].totalHalteBack; i++)
+      myKoridor[slideNum-1].namaHalteBack.append(inputHalteBack[i].getText());
+  }
+  printArray(myKoridor[slideNum-1].namaHalteBack);
+  newHalteWindow.close();
+  newHalteWindow = null;
 }
 //button function
 public void continueButtonFuntion() {

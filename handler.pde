@@ -27,49 +27,19 @@ public void editHalteHandler(GButton source, GEvent event) {
     createListHalte();
 }
 public void saveHalteHandler(GButton source, GEvent event) {
-  if (myKoridor[slideNum-1].namaHalteGo.size() == myKoridor[slideNum-1].totalHalteGo) {
-    //set data 
-    for (int i=0; i<myKoridor[slideNum-1].totalHalteGo; i++)
-      myKoridor[slideNum-1].namaHalteGo.set(i, inputHalteGo[i].getText());
-  } else if (myKoridor[slideNum-1].namaHalteGo.size() < myKoridor[slideNum-1].totalHalteGo) {
-    //remove data then add new data
-    myKoridor[slideNum-1].namaHalteGo.clear();
-    for (int i=0; i<myKoridor[slideNum-1].totalHalteGo; i++)
-      myKoridor[slideNum-1].namaHalteGo.append(inputHalteGo[i].getText());
-  } else if (myKoridor[slideNum-1].namaHalteGo.size() > myKoridor[slideNum-1].totalHalteGo) {
-    //remove data then add new data
-    myKoridor[slideNum-1].namaHalteGo.clear();
-    for (int i=0; i<myKoridor[slideNum-1].totalHalteGo; i++)
-      myKoridor[slideNum-1].namaHalteGo.append(inputHalteGo[i].getText());
-  }
-  
-  printArray(myKoridor[slideNum-1].namaHalteGo);
-  if (myKoridor[slideNum-1].namaHalteBack.size() == myKoridor[slideNum-1].totalHalteBack) {
-    //set data 
-    for (int i=0; i<myKoridor[slideNum-1].totalHalteBack; i++)
-      myKoridor[slideNum-1].namaHalteBack.set(i, inputHalteBack[i].getText());
-  } else if (myKoridor[slideNum-1].namaHalteBack.size() < myKoridor[slideNum-1].totalHalteBack) {
-    //remove data then add new data
-    myKoridor[slideNum-1].namaHalteBack.clear();
-    for (int i=0; i<myKoridor[slideNum-1].totalHalteBack; i++)
-      myKoridor[slideNum-1].namaHalteBack.append(inputHalteBack[i].getText());
-  } else if (myKoridor[slideNum-1].namaHalteBack.size() > myKoridor[slideNum-1].totalHalteBack) {
-    //remove data then add new data
-    myKoridor[slideNum-1].namaHalteBack.clear();
-    for (int i=0; i<myKoridor[slideNum-1].totalHalteBack; i++)
-      myKoridor[slideNum-1].namaHalteBack.append(inputHalteBack[i].getText());
-  }
-  printArray(myKoridor[slideNum-1].namaHalteBack);
+  saveCurrentHalte();
 }
 //handler option
 public void optYesHandler(GOption source, GEvent event) {
   myKoridor[slideNum-1].choice = true;
-  optYes.setSelected(true);optNo.setSelected(false);
+  optYes.setSelected(true);
+  optNo.setSelected(false);
   yesOptionFunction();
 }
 public void optNoHandler(GOption source, GEvent event) {
   myKoridor[slideNum-1].choice = false;
-  optYes.setSelected(false);optNo.setSelected(true);
+  optYes.setSelected(false);
+  optNo.setSelected(true);
   noOptionFunction() ;
 }
 //handler input
@@ -90,6 +60,11 @@ public  void in2Handler(GTextField source, GEvent event) {
     myKoridor[slideNum-1].namaKoridor = inputA.getText();
     if (!myKoridor[slideNum-1].namaKoridor.isEmpty())
       createListHalte();
+  }
+}
+public void halteEnterHandler(GTextField source, GEvent event) {
+  if (event == GEvent.ENTERED) {
+    saveCurrentHalte();
   }
 }
 //handler key
