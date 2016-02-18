@@ -21,7 +21,7 @@ public void buttonNew_click(GButton source, GEvent event) { //_CODE_:buttonNew:6
 
 public void buttonLoad_click(GButton source, GEvent event) { //_CODE_:buttonLoad:917085:
   println("buttonLoad clicked");
-   newSettingWizard();
+   loadSettingWizard();
 } //_CODE_:buttonLoad:917085:
 
 public void buttonVoice_click(GButton source, GEvent event) { //_CODE_:buttonVoice:220763:
@@ -31,6 +31,7 @@ public void buttonVoice_click(GButton source, GEvent event) { //_CODE_:buttonVoi
 
 public void buttonSD_click(GButton source, GEvent event) { //_CODE_:buttonSD:263848:
   println("buttonSD clicked");
+  createWriteToSDWindow();
 } //_CODE_:buttonSD:263848:
 
 public void buttonExit_click(GButton source, GEvent event) { //_CODE_:buttonExit:988049:

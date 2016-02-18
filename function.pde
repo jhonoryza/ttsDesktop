@@ -47,48 +47,60 @@ void loadVoiceSetting() {
 
 PrintWriter output;
 void saveTextFunction() {
-  String path = sketchPath()+"/data/listKoridor.txt";
-  println(path);
-  String text ="";
-  for (int i=0; i<korNum; i++)
-    text += myKoridor[i].namaKoridor +",";
-  String[] meText = split(text, ",");
-  saveStrings(path, meText);
-  newSettingWindow.close();
-
-  output = createWriter(sketchPath() +"/data/config.txt"); 
-  String data = "list koridor : \"";
-  output.println("total koridor : \"" +korNum +"\"");
-  for (int i=0; i<korNum; i++)
-    data += myKoridor[i].namaKoridor +",";
-  data += "\"";
+  output = createWriter(newSettingFilePath); 
+  String data = "list koridor : ";
+  output.println("total koridor : " +korNum);
+  for (int i=0; i<korNum; i++) {
+    if (i>0)
+      data += ",";
+    data += myKoridor[i].namaKoridor;
+  }
   output.println(data);
   for (int i=0; i<korNum; i++) {
-    data = "list halte : \"";
-    output.println("total halte (jalur pergi) koridor "+i +" :\"" +myKoridor[i].totalHalteGo +"\"");
+    data = "list halte : ";
+    output.println("total halte (jalur pergi) koridor "+i +" : " +myKoridor[i].totalHalteGo);
     for (int j=0; j<myKoridor[i].totalHalteGo; j++) {
-      data += myKoridor[i].namaHalteGo.get(j) +",";
+      if (j>0)
+        data += ",";
+      data += myKoridor[i].namaHalteGo.get(j);
     }
-    data += "\"";
     output.println(data);
-    data = "list halte : \"";
-    output.println("total halte (jalur pulang) koridor "+i +" :\"" +myKoridor[i].totalHalteBack +"\"");
+    data = "list halte : ";
+    output.println("total halte (jalur pulang) koridor "+i +" : " +myKoridor[i].totalHalteBack);
     for (int j=0; j<myKoridor[i].totalHalteBack; j++) {
-      data += myKoridor[i].namaHalteBack.get(j) +",";
+      if (j>0)
+        data += ",";
+      data += myKoridor[i].namaHalteBack.get(j);
     }
-    data += "\"";
     output.println(data);
-    data = "";
+    data = "list text indoor : ";
   }
+  for (int i=0; i<textIndoor.size(); i++) {
+    if (i>0)
+      data += ",";
+    data += textIndoor.get(i);
+  }
+  output.println(data);
+  data = "list text outoor : s";
+  for (int i=0; i<textOutdoor.size(); i++) {
+    if (i>0)
+      data += ",";
+    data += textOutdoor.get(i);
+  }
+  output.println(data);
+  data = "";
+
   output.flush(); // Writes the remaining data to the file
   output.close(); // Finishes the file
-  exit(); // Stops the program
+  //exit(); // Stops the program
+  //return 1;
 }
 
 GWindow newSettingWindow;
 GLabel labelText, labela, labelb;
-GButton buttonNext, buttonContinue, buttonBack, editHalte;
-GTextField inputA, in1, in2;
+GButton buttonNext, buttonContinue, buttonBack, editHalte, buttonBrowse;
+GTextField inputA, in1, in2; 
+GTextField[] inB;
 GOption optYes, optNo;
 GToggleGroup optGroup;
 GTabManager tab;
@@ -98,7 +110,7 @@ public void newSettingWizard() {
   newSettingWindow.setActionOnClose(G4P.CLOSE_WINDOW);
   newSettingWindow.addDrawHandler(this, "win_drawNewSetting");
   //media
-  buttonContinue = new GButton(newSettingWindow, newSettingWindow.width-70, newSettingWindow.height-40, 60, 25);
+  buttonContinue = new GButton(newSettingWindow, newSettingWindow.width-70, newSettingWindow.height-30, 60, 25);
   buttonContinue.setOpaque(false);
   buttonContinue.setText("continue");
   buttonContinue.addEventHandler(this, "buttonContinueHandler");
@@ -108,12 +120,34 @@ public void newSettingWizard() {
   inputA.addEventHandler(this, "inputAHandler");
   inputA.setPromptText("input total koridor");
   inputA.setFont(GuiUbu11);
-  buttonNext = new GButton(newSettingWindow, newSettingWindow.width-70, newSettingWindow.height-40, 50, 25);
+  inB = new GTextField[5];
+  inB[0] = new GTextField(newSettingWindow, 10, 65, 260, 20, G4P.SCROLLBARS_NONE);
+  inB[0].setOpaque(false);
+  inB[0].addEventHandler(this, "inB1Handler");
+  inB[0].setFont(GuiUbu11);
+  inB[1] = new GTextField(newSettingWindow, 10, inB[0].getY()+30, 260, 20, G4P.SCROLLBARS_NONE);
+  inB[1].setOpaque(false);
+  inB[1].addEventHandler(this, "inB2Handler");
+  inB[1].setFont(GuiUbu11);
+  inB[2] = new GTextField(newSettingWindow, 10, inB[1].getY()+30, 260, 20, G4P.SCROLLBARS_NONE);
+  inB[2].setOpaque(false);
+  inB[2].addEventHandler(this, "inB3Handler");
+  inB[2].setFont(GuiUbu11);
+  inB[3] = new GTextField(newSettingWindow, 10, inB[2].getY()+30, 260, 20, G4P.SCROLLBARS_NONE);
+  inB[3].setOpaque(false);
+  inB[3].addEventHandler(this, "inB4Handler");
+  inB[3].setFont(GuiUbu11);
+  inB[4] = new GTextField(newSettingWindow, 10, inB[3].getY()+30, 260, 20, G4P.SCROLLBARS_NONE);
+  inB[4].setOpaque(false);
+  inB[4].addEventHandler(this, "inB5Handler");
+  inB[4].setFont(GuiUbu11);
+
+  buttonNext = new GButton(newSettingWindow, newSettingWindow.width-70, newSettingWindow.height-30, 50, 25);
   buttonNext.setOpaque(false);
   buttonNext.setText("next");
   buttonNext.addEventHandler(this, "buttonNextHandler");
   buttonNext.setFont(GuiUbu11);
-  buttonBack = new GButton(newSettingWindow, buttonNext.getX()-buttonNext.getWidth(), newSettingWindow.height-40, 50, 25);
+  buttonBack = new GButton(newSettingWindow, buttonNext.getX()-buttonNext.getWidth()- 20, newSettingWindow.height-30, 50, 25);
   buttonBack.setOpaque(false);
   buttonBack.setText("back");
   buttonBack.addEventHandler(this, "buttonBackHandler");
@@ -146,16 +180,23 @@ public void newSettingWizard() {
   in2.setFont(GuiUbu11);
   tab = new GTabManager();
   tab.addControls(inputA, in1, in2);
-  editHalte = new GButton(newSettingWindow, optYes.getX(), in2.getY(), 80, 20);
+  editHalte = new GButton(newSettingWindow, optYes.getX(), in1.getY(), 80, 20);
   editHalte.setText("edit halte");
   editHalte.setOpaque(false);
   editHalte.setVisible(false);
   editHalte.addEventHandler(this, "editHalteHandler");
   editHalte.setFont(GuiUbu11);
+  buttonBrowse = new GButton(newSettingWindow, 10, newSettingWindow.height - 30, 80, 20);
+  buttonBrowse.setText("browse");
+  buttonBrowse.setOpaque(false);
+  buttonBrowse.setVisible(false);
+  buttonBrowse.addEventHandler(this, "browseHandler");
+  buttonBrowse.setFont(GuiUbu11);
   //value init
   korNum = 0; 
   slideNum = 0; 
   newSetSlideNum = 0;
+  GUINewSetSlideNum0();
   newSettingWindow.loop();
 }
 
@@ -256,6 +297,36 @@ void createListHalte() {
   inputHalteBack[myKoridor[slideNum-1].totalHalteBack-1].addEventHandler(this, "halteEnterHandler");
   newHalteWindow.loop();
 }
+GWindow newWriteToSDWindow;
+GButton buttonLoadSetting, buttonWriteText, buttonWriteVoice;
+public void createWriteToSDWindow() {
+  newWriteToSDWindow = GWindow.getWindow(this, "write to sd", 150, 20, 500, 300, JAVA2D);
+  newWriteToSDWindow.noLoop();
+  newWriteToSDWindow.setActionOnClose(G4P.CLOSE_WINDOW);
+  newWriteToSDWindow.addDrawHandler(this, "newWriteToSDWindowHandler");
+  //newWriteToSDWindow.addKeyHandler(this, "newHalteWindowKeyHandler");
+  //newWriteToSDWindow.addMouseHandler(this, "newHalteWindowMouseHandler");
+
+  buttonLoadSetting = new GButton(newWriteToSDWindow, 10, 40, 90, 30);
+  buttonLoadSetting.setText("load setting");
+  buttonLoadSetting.setOpaque(false);
+  buttonLoadSetting.addEventHandler(this, "buttonLoadSettingHandler");
+  buttonLoadSetting.setFont(GuiUbu11);
+
+  buttonWriteText = new GButton(newWriteToSDWindow, 10, buttonLoadSetting.getY() + 40, 90, 30);
+  buttonWriteText.setText("write text");
+  buttonWriteText.setOpaque(false);
+  buttonWriteText.addEventHandler(this, "buttonWriteTextHandler");
+  buttonWriteText.setFont(GuiUbu11);
+
+  buttonWriteVoice = new GButton(newWriteToSDWindow, 10, buttonWriteText.getY() + 40, 90, 30);
+  buttonWriteVoice.setText("write voice");
+  buttonWriteVoice.setOpaque(false);
+  buttonWriteVoice.addEventHandler(this, "buttonWriteVoiceHandler");
+  buttonWriteVoice.setFont(GuiUbu11);
+
+  newWriteToSDWindow.loop();
+}
 //load pre data new setting wizard
 public void loadPreDataNewWizard() {
   inputA.setText(myKoridor[slideNum-1].namaKoridor);
@@ -263,6 +334,22 @@ public void loadPreDataNewWizard() {
     yesOptionFunction();
   else
     noOptionFunction();
+}
+public void loadPreDataNewWizard2() {
+  if (textIndoor.size() > 0) {
+    for (int i=0; i<textIndoor.size(); i++)
+      inB[i].setText(textIndoor.get(i));
+  }
+  for (int i=textIndoor.size(); i<5; i++)
+    inB[i].setText("");
+}
+public void loadPreDataNewWizard3() {
+  if (textOutdoor.size() > 0) {
+    for (int i=0; i<textOutdoor.size(); i++)
+      inB[i].setText(textOutdoor.get(i));
+  }
+  for (int i=textOutdoor.size(); i<5; i++)
+    inB[i].setText("");
 }
 //halte edit function
 public void saveCurrentHalte() {
@@ -302,6 +389,7 @@ public void saveCurrentHalte() {
   newHalteWindow.close();
   newHalteWindow = null;
 }
+
 //button function
 public void continueButtonFuntion() {
   korNum = int(inputA.getText());
@@ -313,43 +401,122 @@ public void continueButtonFuntion() {
     myKoridor[slideNum-1] = new koridor();
     inputA.setPromptText("Nama Koridor " +slideNum);
     loadPreDataNewWizard();
+    GUINewSetSlideNum1();
   }
 }
 public void nextButtonFuntion() {
-  if (slideNum >= korNum) {
-    saveTextFunction();
-    newSetSlideNum = 0;
-    slideNum = 0;
-  } else {
-    if (newSetSlideNum == 1) {
-      myKoridor[slideNum] = new koridor();
+  if (newSetSlideNum == 1) {
+    if (slideNum >= korNum) {
       myKoridor[slideNum-1].namaKoridor = inputA.getText();
-      println(myKoridor[slideNum-1].namaKoridor);
-      if (in2.isVisible()) {
-        myKoridor[slideNum-1].totalHalteGo = int(in1.getText());
-        myKoridor[slideNum-1].totalHalteBack = int(in2.getText());
-      } else {
-        myKoridor[slideNum-1].totalHalteGo = int(in1.getText());
-        myKoridor[slideNum-1].totalHalteBack = int(in1.getText());
+      newSetSlideNum = 2;
+      GUINewSetSlideNum2();
+      loadPreDataNewWizard2();
+    } else {
+      if (newSetSlideNum == 1) {
+        myKoridor[slideNum] = new koridor();
+        myKoridor[slideNum-1].namaKoridor = inputA.getText();
+        println(myKoridor[slideNum-1].namaKoridor);
+        if (in2.isVisible()) {
+          myKoridor[slideNum-1].totalHalteGo = int(in1.getText());
+          myKoridor[slideNum-1].totalHalteBack = int(in2.getText());
+        } else {
+          myKoridor[slideNum-1].totalHalteGo = int(in1.getText());
+          myKoridor[slideNum-1].totalHalteBack = int(in1.getText());
+        }
       }
+      slideNum += 1;
+      loadPreDataNewWizard();
     }
-    slideNum += 1;
-    loadPreDataNewWizard();
+    in1.setText(""); 
+    in2.setText("");
+    inputA.setPromptText("Nama Koridor " +slideNum);
+  } else if (newSetSlideNum == 2) {
+    if (!inB[0].getText().isEmpty()) {
+      //add new data
+      if (textIndoor.size() > 0)
+        textIndoor.set(0, inB[0].getText());
+      else
+        textIndoor.append(inB[0].getText());
+      for (int i=1; i<5; i++) {
+        if (!inB[i].getText().isEmpty()) {
+          if (textIndoor.size() > i)
+            textIndoor.set(i, inB[i].getText());
+          else
+            textIndoor.append(inB[i].getText());
+        }
+      }
+
+      newSetSlideNum = 3;
+      buttonNext.setText("finish");
+      GUINewSetSlideNum3();
+      loadPreDataNewWizard3();
+    }
+  } else if (newSetSlideNum == 3) {
+    if (!newSettingFilePath.isEmpty() && newSettingFilePath != null) {
+      //save function
+      if (!inB[0].getText().isEmpty()) {
+        //add new data
+        if (textOutdoor.size() > 0)
+          textOutdoor.set(0, inB[0].getText());
+        else
+          textOutdoor.append(inB[0].getText());
+
+        for (int i=1; i<5; i++) {
+          if (!inB[i].getText().isEmpty()) {
+            if (textOutdoor.size() > i)
+              textOutdoor.set(i, inB[i].getText());
+            else
+              textOutdoor.append(inB[i].getText());
+          }
+        }
+      }
+      saveTextFunction();
+      newSettingWindow.close(); 
+      newSettingWindow = null;
+      println("saved to " +newSettingFilePath);
+    } else {
+      println("no path file");
+    }
   }
-  in1.setText(""); 
-  in2.setText("");
-  inputA.setPromptText("Nama Koridor " +slideNum);
 }
 public void backButtonFunction() {
-  inputA.setText("");
-  slideNum -= 1;
-  if (slideNum < 1) {
-    newSetSlideNum = 0;
-    slideNum = 0;
-    inputA.setPromptText("Input Jumlah Koridor");
-  } else {
-    inputA.setPromptText("Nama Koridor " +slideNum);
+  if (newSetSlideNum == 1) {
+    inputA.setText("");
+    slideNum -= 1;
+    if (slideNum < 1) {
+      newSetSlideNum = 0;
+      slideNum = 0;
+      GUINewSetSlideNum0();
+      inputA.setPromptText("Input Jumlah Koridor");
+    } else {
+      inputA.setPromptText("Nama Koridor " +slideNum);
+      loadPreDataNewWizard();
+    }
+  } else if (newSetSlideNum == 2) {
+    newSetSlideNum = 1; 
+    GUINewSetSlideNum1();
     loadPreDataNewWizard();
+  } else if (newSetSlideNum == 3) {
+    if (!inB[0].getText().isEmpty()) {
+      //add new data
+      if (textOutdoor.size() > 0)
+        textOutdoor.set(0, inB[0].getText());
+      else
+        textOutdoor.append(inB[0].getText());
+
+      for (int i=1; i<5; i++) {
+        if (!inB[i].getText().isEmpty()) {
+          if (textOutdoor.size() > i)
+            textOutdoor.set(i, inB[i].getText());
+          else
+            textOutdoor.append(inB[i].getText());
+        }
+      }
+    }
+
+    newSetSlideNum = 2; 
+    buttonNext.setText("next");
+    loadPreDataNewWizard2();
   }
 }
 // option function
@@ -363,4 +530,30 @@ public void noOptionFunction() {
   in1.setVisible(true);
   in2.setVisible(true);
   editHalte.setVisible(true);
+}
+
+public void loadSettingWizard(){
+  selectInput("Select a file to process:", "loadSettingWizardLoaded");
+}
+void loadSettingWizardLoaded(File selection) {
+  if (selection == null) {
+    println("Window was closed or the user hit cancel.");
+  } else {
+    loadSettingWizardPath = selection.getAbsolutePath();
+    if (!loadSettingWizardPath.isEmpty()) {
+    String lines[] = loadStrings(loadSettingWizardPath);
+    println(lines.length);
+    for (int i = 0; i < lines.length; i++) {
+      //println(lines[i]);
+      String[] list = split(lines[i], ":");
+      
+      for (int j=0; j<list.length; j++) {
+        list[j] = trim(list[j]);
+       // String[] koridorFiles = loadStrings(path +"\\" +list[j]);
+       // loadFilesToArea(koridorFiles, j, i);
+      }
+      printArray(list);
+    }
+    }
+  }
 }

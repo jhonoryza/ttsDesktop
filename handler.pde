@@ -26,8 +26,60 @@ public void editHalteHandler(GButton source, GEvent event) {
   if (!myKoridor[slideNum-1].namaKoridor.isEmpty())
     createListHalte();
 }
+public void inB1Handler(GButton source, GEvent event) {
+}
+public void inB2Handler(GButton source, GEvent event) {
+}
+public void inB3Handler(GButton source, GEvent event) {
+}
+public void inB4Handler(GButton source, GEvent event) {
+}
+public void inB5Handler(GButton source, GEvent event) {
+}
 public void saveHalteHandler(GButton source, GEvent event) {
   saveCurrentHalte();
+}
+public void buttonLoadSettingHandler(GButton source, GEvent event) {
+  selectInput("Select a file to process:", "loadSettingLoaded");
+}
+void loadSettingLoaded(File selection) {
+  if (selection == null) {
+    println("Window was closed or the user hit cancel.");
+  } else {
+    loadSettingPath = selection.getAbsolutePath();
+  }
+}
+public void buttonWriteTextHandler(GButton source, GEvent event) {
+  if (!loadSettingPath.isEmpty()) {
+    String lines[] = loadStrings(loadSettingPath);
+    println(lines.length);
+    for (int i = 0; i < lines.length; i++) {
+      println(lines[i]);
+      String[] list = split(lines[i], ":");
+      printArray(list);
+      //for (int j=0; j<list.length; j++) {
+      //  String[] koridorFiles = loadStrings(path +"\\" +list[j]);
+      //  loadFilesToArea(koridorFiles, j, i);
+      //}
+    }
+  }
+  newWriteToSDWindow.close();
+  newWriteToSDWindow = null;
+}
+public void buttonWriteVoiceHandler(GButton source, GEvent event) {
+
+}
+boolean browsed = false;
+public void browseHandler(GButton source, GEvent event) {
+  selectOutput("Select a file to write to:", "fileSelected");
+}
+void fileSelected(File selection) {
+  if (selection == null) {
+    println("Window was closed or the user hit cancel.");
+  } else {
+    browsed = true;
+    newSettingFilePath = selection.getAbsolutePath();
+  }
 }
 //handler option
 public void optYesHandler(GOption source, GEvent event) {

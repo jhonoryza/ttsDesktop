@@ -3,9 +3,14 @@ import g4p_controls.*;
 import java.awt.Font;
 
 //public variable
-String voicePitch, voiceRate, voiceVolume;
+String voicePitch, voiceRate, voiceVolume, newSettingFilePath, loadSettingPath, loadSettingWizardPath;
+StringList textIndoor, textOutdoor;
 
 public void setup() {
+  newSettingFilePath = sketchPath() +"/data/my.cfg";
+  loadSettingPath = ""; loadSettingWizardPath = "";
+  textIndoor = new StringList();
+  textOutdoor = new StringList();
   loadCurrentFont();
   size(350, 190, JAVA2D);
   createGUI();
@@ -14,7 +19,6 @@ public void setup() {
   println(sketchPath());
   loadVoiceSetting();
 }
-
 public void draw() {
   background(240);
   noStroke();
@@ -52,6 +56,7 @@ synchronized public void win_drawNewSetting(PApplet appc, GWinData data) {
   //border
   appc.fill(255, 255, 255, 200);
   appc.rect(0, 0, appc.width, appc.height/7);
+  appc.rect(0, appc.height-appc.height/7, appc.width, appc.height/7);
 
   //text
   appc.fill(0);
@@ -61,44 +66,46 @@ synchronized public void win_drawNewSetting(PApplet appc, GWinData data) {
 
   if (newSetSlideNum == 0) {
     appc.text("Input total koridor :", 10, 60);
-    if (buttonNext != null && buttonBack != null && buttonContinue != null && optYes != null && optNo != null && in1 != null && in2 != null && editHalte != null) {
-      buttonNext.setVisible(false);
-      buttonBack.setVisible(false);
-      buttonContinue.setVisible(true);
-      optYes.setVisible(false);
-      optNo.setVisible(false);
-      in1.setVisible(false);
-      in2.setVisible(false);
-      editHalte.setVisible(false);
-    }
   } else if (newSetSlideNum == 1) {
     appc.text("Input nama koridor " +slideNum, 10, 60);
     appc.text("Total halte (jalur pergi) == Total halte (jalur pulang) ?", 10, 110);
-    if (buttonNext != null && buttonBack != null && buttonContinue != null && optYes != null && optNo != null && in1 != null && in2 != null && editHalte != null) {
-      buttonNext.setVisible(true);
-      buttonBack.setVisible(true);
-      buttonContinue.setVisible(false);
-      optYes.setVisible(true);
-      optNo.setVisible(true);
-      if(in2.isVisible()){
-       appc.text("input total halte (jalur pergi)", 10, 130);
-       appc.text("input total halte (jalur pulang)", 10, 180);
-      }
-      else if(!in2.isVisible()){
-        appc.text("input total halte (jalur pergi) dan (jalur pulang)", 10, 130);
-      }
-    }
+    if (muncul) {
+      appc.text("input total halte (jalur pergi)", 10, 130);
+      appc.text("input total halte (jalur pulang)", 10, 180);
+    } else
+      appc.text("input total halte (jalur pergi) dan (jalur pulang)", 10, 130);
+  } else if (newSetSlideNum == 2) {
+    appc.text("Input text indoor ", 10, 60);
+  } else if (newSetSlideNum == 3) {
+    appc.text("Input text outdoor ", 10, 60);
+    if (browsed)
+      appc.text("save path: " +newSettingFilePath, 10, newSettingWindow.height-50);
+    else if (!browsed)
+      appc.text("save path: " +newSettingFilePath, 10, newSettingWindow.height-50);
   }
 }
 
 synchronized public void newHalteWindowHandler(PApplet appc, GWinData data) {
   appc.background(240);
   appc.noStroke();
-  
+
   //border
   appc.fill(255, 255, 255, 200);
   appc.rect(appc.width - 120, 0, appc.width - (appc.width - 120), appc.height);
-  
+}
+
+synchronized public void newWriteToSDWindowHandler(PApplet appc, GWinData data) {
+  appc.background(240);
+  appc.noStroke();
+
+  //border
+  appc.fill(255, 255, 255, 200);
+  appc.rect(0, appc.height-20, appc.width, appc.height/6);
+
+  //text
+  appc.fill(0);
+  textFont(ubu11);
+  appc.text("no setting load", 10, 20);
 }
 
 synchronized public void win_drawVoiceSetting(PApplet appc, GWinData data) {
@@ -117,4 +124,74 @@ synchronized public void win_drawVoiceSetting(PApplet appc, GWinData data) {
   appc.text("Pitch (0 - 1) :", inputVolume.getX()-80, inputPitch.getY()+15);
   appc.textSize(10);
   appc.text(sketchPath() +"/data/voice.cfg", 0, appc.height-7);
+}
+public void GUINewSetSlideNum0() {
+  if (buttonNext != null && buttonBack != null && buttonContinue != null && optYes != null && optNo != null && in1 != null && in2 != null && editHalte != null) {
+    buttonNext.setVisible(false);
+    buttonBack.setVisible(false);
+    buttonContinue.setVisible(true);
+    optYes.setVisible(false);
+    optNo.setVisible(false);
+    in1.setVisible(false);
+    in2.setVisible(false);
+    editHalte.setVisible(false);
+    for (int i=0; i<5; i++)
+      inB[i].setVisible(false);
+    buttonBrowse.setVisible(false);
+  }
+}
+boolean muncul = false;
+public void GUINewSetSlideNum1() {
+  if (buttonNext != null && buttonBack != null && buttonContinue != null && optYes != null && optNo != null && in1 != null && in2 != null && editHalte != null) {
+    buttonNext.setVisible(true);
+    buttonBack.setVisible(true);
+    buttonContinue.setVisible(false);
+    optYes.setVisible(true);
+    optNo.setVisible(true);
+    if (in2.isVisible())
+      muncul = true;
+    else if (!in2.isVisible())
+      muncul = false;
+    for (int i=0; i<5; i++)
+      inB[i].setVisible(false);
+    buttonBrowse.setVisible(false);
+  }
+}
+public void GUINewSetSlideNum2() {
+  if (buttonNext != null && buttonBack != null && buttonContinue != null && optYes != null && optNo != null && in1 != null && in2 != null && editHalte != null) {
+    buttonNext.setVisible(true);
+    buttonBack.setVisible(true);
+    buttonContinue.setVisible(false);
+    optYes.setVisible(false);
+    optNo.setVisible(false);
+    in1.setVisible(false);
+    editHalte.setVisible(false);
+    for (int i=0; i<5; i++) {
+      inB[i].setVisible(true);
+      if (i==0)
+        inB[i].setPromptText("input text indoor " +i);
+      if (i>0)
+        inB[i].setPromptText("input text indoor "+i +" (optional)");
+    }
+    buttonBrowse.setVisible(false);
+  }
+}
+public void GUINewSetSlideNum3() {
+  if (buttonNext != null && buttonBack != null && buttonContinue != null && optYes != null && optNo != null && in1 != null && in2 != null && editHalte != null) {
+    buttonNext.setVisible(true);
+    buttonBack.setVisible(true);
+    buttonContinue.setVisible(false);
+    optYes.setVisible(false);
+    optNo.setVisible(false);
+    in1.setVisible(false);
+    editHalte.setVisible(false);
+    for (int i=0; i<5; i++) {
+      inB[i].setVisible(true);
+      if (i==0)
+        inB[i].setPromptText("input text outdoor " +i);
+      if (i>0)
+        inB[i].setPromptText("input text outdoor "+i +" (optional)");
+    }
+    buttonBrowse.setVisible(true);
+  }
 }

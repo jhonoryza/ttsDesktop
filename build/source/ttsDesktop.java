@@ -22,12 +22,12 @@ public class ttsDesktop extends PApplet {
 
 
 //public variable
-String voicePitch, voiceRate, voiceVolume, newSettingFilePath, loadSettingPath, loadSettingWizardPath;
+String voicePitch, voiceRate, voiceVolume, newSettingFilePath, loadSettingPath;
 StringList textIndoor, textOutdoor;
 
 public void setup() {
   newSettingFilePath = sketchPath() +"/data/my.cfg";
-  loadSettingPath = ""; loadSettingWizardPath = "";
+  loadSettingPath = "";
   textIndoor = new StringList();
   textOutdoor = new StringList();
   loadCurrentFont();
@@ -777,32 +777,6 @@ public void noOptionFunction() {
   in2.setVisible(true);
   editHalte.setVisible(true);
 }
-
-public void loadSettingWizard(){
-  selectInput("Select a file to process:", "loadSettingWizardLoaded");
-}
-public void loadSettingWizardLoaded(File selection) {
-  if (selection == null) {
-    println("Window was closed or the user hit cancel.");
-  } else {
-    loadSettingWizardPath = selection.getAbsolutePath();
-    if (!loadSettingWizardPath.isEmpty()) {
-    String lines[] = loadStrings(loadSettingWizardPath);
-    println(lines.length);
-    for (int i = 0; i < lines.length; i++) {
-      //println(lines[i]);
-      String[] list = split(lines[i], ":");
-      
-      for (int j=0; j<list.length; j++) {
-        list[j] = trim(list[j]);
-       // String[] koridorFiles = loadStrings(path +"\\" +list[j]);
-       // loadFilesToArea(koridorFiles, j, i);
-      }
-      printArray(list);
-    }
-    }
-  }
-}
 /* =========================================================
  * ====                   WARNING                        ===
  * =========================================================
@@ -826,7 +800,7 @@ public void buttonNew_click(GButton source, GEvent event) { //_CODE_:buttonNew:6
 
 public void buttonLoad_click(GButton source, GEvent event) { //_CODE_:buttonLoad:917085:
   println("buttonLoad clicked");
-   loadSettingWizard();
+   newSettingWizard();
 } //_CODE_:buttonLoad:917085:
 
 public void buttonVoice_click(GButton source, GEvent event) { //_CODE_:buttonVoice:220763:
@@ -934,8 +908,7 @@ public void buttonWriteTextHandler(GButton source, GEvent event) {
     println(lines.length);
     for (int i = 0; i < lines.length; i++) {
       println(lines[i]);
-      String[] list = split(lines[i], ":");
-      printArray(list);
+      //String[] list = split(lines[i], ',');
       //for (int j=0; j<list.length; j++) {
       //  String[] koridorFiles = loadStrings(path +"\\" +list[j]);
       //  loadFilesToArea(koridorFiles, j, i);
