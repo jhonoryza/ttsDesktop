@@ -22,8 +22,8 @@ public void buttonBackHandler(GButton source, GEvent event) {
   backButtonFunction();
 }
 public void editHalteHandler(GButton source, GEvent event) {
-  myKoridor[slideNum-1].namaKoridor = inputA.getText();
-  if (!myKoridor[slideNum-1].namaKoridor.isEmpty())
+  myKoridor.get(slideNum-1).namaKoridor = inputA.getText();
+  if (!myKoridor.get(slideNum-1).namaKoridor.isEmpty())
     createListHalte();
 }
 public void inB1Handler(GButton source, GEvent event) {
@@ -67,7 +67,6 @@ public void buttonWriteTextHandler(GButton source, GEvent event) {
   newWriteToSDWindow = null;
 }
 public void buttonWriteVoiceHandler(GButton source, GEvent event) {
-
 }
 boolean browsed = false;
 public void browseHandler(GButton source, GEvent event) {
@@ -81,15 +80,37 @@ void fileSelected(File selection) {
     newSettingFilePath = selection.getAbsolutePath();
   }
 }
+public void butMeButtonHandler(GButton source, GEvent event) {
+  for (int i=0; i<totalKor; i++) {
+    if (source.tagNo == i) {
+      println("tag "+i +" clicked"); 
+      editHalteAndKoridor(i);
+    }
+  }
+}
+public void delMeButtonHandler(GButton source, GEvent event) {
+  for (int i=0; i<totalKor; i++) {
+    if (source.tagNo == i) {
+      delMe[i].dispose();
+      delMe[i] = null;
+      butMe[i].dispose();
+      butMe[i] = null;
+      me[i].dispose();
+      me[i] = null;
+    }
+  }
+}
+public void buttonSaveLoadSettingWizardHandler(GButton source, GEvent event) {
+}
 //handler option
 public void optYesHandler(GOption source, GEvent event) {
-  myKoridor[slideNum-1].choice = true;
+  myKoridor.get(slideNum-1).choice = true;
   optYes.setSelected(true);
   optNo.setSelected(false);
   yesOptionFunction();
 }
 public void optNoHandler(GOption source, GEvent event) {
-  myKoridor[slideNum-1].choice = false;
+  myKoridor.get(slideNum-1).choice = false;
   optYes.setSelected(false);
   optNo.setSelected(true);
   noOptionFunction() ;
@@ -102,15 +123,15 @@ public void inputAHandler(GTextField source, GEvent event) {
 }
 public void in1Handler(GTextField source, GEvent event) {
   if (event == GEvent.ENTERED && !in2.isVisible()) {
-    myKoridor[slideNum-1].namaKoridor = inputA.getText();
-    if (!myKoridor[slideNum-1].namaKoridor.isEmpty())
+    myKoridor.get(slideNum-1).namaKoridor = inputA.getText();
+    if (!myKoridor.get(slideNum-1).namaKoridor.isEmpty())
       createListHalte();
   }
 }
 public  void in2Handler(GTextField source, GEvent event) {
   if (event == GEvent.ENTERED) {
-    myKoridor[slideNum-1].namaKoridor = inputA.getText();
-    if (!myKoridor[slideNum-1].namaKoridor.isEmpty())
+    myKoridor.get(slideNum-1).namaKoridor = inputA.getText();
+    if (!myKoridor.get(slideNum-1).namaKoridor.isEmpty())
       createListHalte();
   }
 }
@@ -131,5 +152,10 @@ public void newHalteWindowKeyHandler(PApplet app, GWinData data, KeyEvent event)
 public void newHalteWindowMouseHandler(PApplet app, GWinData data, MouseEvent mevent) {
   if (mevent.getAction() == MouseEvent.WHEEL) {
     panelHalte.moveTo(0, panelHalte.getY() +(10*mevent.getCount()));
+  }
+}
+public void loadSettingWizardWindowMouseHandler(PApplet app, GWinData data, MouseEvent mevent) {
+  if (mevent.getAction() == MouseEvent.WHEEL) {
+    groupLoadSettingWizard.moveTo(0, groupLoadSettingWizard.getY() +(10*mevent.getCount()));
   }
 }

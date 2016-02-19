@@ -44,11 +44,17 @@ public void customGUI() {
   buttonVoice.setFont(GuiUbu11);
   buttonSD.setFont(GuiUbu11);
   buttonExit.setFont(GuiUbu11);
+  GButton.useRoundCorners(false);
+  //buttonLoad.useRoundCorners(false);
+  //buttonVoice.useRoundCorners(false);
+  //buttonSD.useRoundCorners(false);
+  //buttonExit.useRoundCorners(false);
 }
 
 //handler window
 int korNum = 0, slideNum = 0, newSetSlideNum = 0;
-koridor[] myKoridor;
+//koridor[] myKoridor;
+ArrayList<koridor> myKoridor = new ArrayList<koridor>();
 synchronized public void win_drawNewSetting(PApplet appc, GWinData data) {
   appc.background(240);
   appc.noStroke();
@@ -124,6 +130,27 @@ synchronized public void win_drawVoiceSetting(PApplet appc, GWinData data) {
   appc.text("Pitch (0 - 1) :", inputVolume.getX()-80, inputPitch.getY()+15);
   appc.textSize(10);
   appc.text(sketchPath() +"/data/voice.cfg", 0, appc.height-7);
+}
+synchronized public void loadSettingWizardHandler(PApplet appc, GWinData data){
+  appc.background(240);
+  appc.noStroke();
+
+  //border
+  appc.fill(255, 255, 255, 200);
+  appc.rect(appc.width-140, 0, 160, appc.height);
+
+  //text
+  //appc.fill(0);
+  //textFont(ubu11);
+  //appc.text("Koridor List", 10 , 20);
+}
+synchronized public void editHalteAndKoridorWindowHandler(PApplet appc, GWinData data){
+  appc.background(240);
+  appc.noStroke();
+  
+  appc.fill(0);
+  textFont(ubu11);
+  //appc.text("Koridor List", 10 , 20)
 }
 public void GUINewSetSlideNum0() {
   if (buttonNext != null && buttonBack != null && buttonContinue != null && optYes != null && optNo != null && in1 != null && in2 != null && editHalte != null) {

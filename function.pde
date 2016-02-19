@@ -53,24 +53,24 @@ void saveTextFunction() {
   for (int i=0; i<korNum; i++) {
     if (i>0)
       data += ",";
-    data += myKoridor[i].namaKoridor;
+    data += myKoridor.get(i).namaKoridor;
   }
   output.println(data);
   for (int i=0; i<korNum; i++) {
     data = "list halte : ";
-    output.println("total halte (jalur pergi) koridor "+i +" : " +myKoridor[i].totalHalteGo);
-    for (int j=0; j<myKoridor[i].totalHalteGo; j++) {
+    output.println("total halte (jalur pergi) koridor "+i +" : " +myKoridor.get(i).totalHalteGo);
+    for (int j=0; j<myKoridor.get(i).totalHalteGo; j++) {
       if (j>0)
         data += ",";
-      data += myKoridor[i].namaHalteGo.get(j);
+      data += myKoridor.get(i).namaHalteGo.get(j);
     }
     output.println(data);
     data = "list halte : ";
-    output.println("total halte (jalur pulang) koridor "+i +" : " +myKoridor[i].totalHalteBack);
-    for (int j=0; j<myKoridor[i].totalHalteBack; j++) {
+    output.println("total halte (jalur pulang) koridor "+i +" : " +myKoridor.get(i).totalHalteBack);
+    for (int j=0; j<myKoridor.get(i).totalHalteBack; j++) {
       if (j>0)
         data += ",";
-      data += myKoridor[i].namaHalteBack.get(j);
+      data += myKoridor.get(i).namaHalteBack.get(j);
     }
     output.println(data);
     data = "list text indoor : ";
@@ -197,6 +197,9 @@ public void newSettingWizard() {
   slideNum = 0; 
   newSetSlideNum = 0;
   GUINewSetSlideNum0();
+  myKoridor.clear();
+  textIndoor = new StringList();
+  textOutdoor = new StringList();
   newSettingWindow.loop();
 }
 
@@ -205,15 +208,15 @@ GPanel panelHalte;
 GTextField[] inputHalteGo;
 GTextField[] inputHalteBack;
 void createListHalte() {
-  myKoridor[slideNum-1].totalHalteGo = int(in1.getText());
+  myKoridor.get(slideNum-1).totalHalteGo = int(in1.getText());
   if (!in2.isVisible()) {
-    myKoridor[slideNum-1].totalHalteBack = int(in1.getText());
+    myKoridor.get(slideNum-1).totalHalteBack = int(in1.getText());
   } else {
-    myKoridor[slideNum-1].totalHalteBack = int(in2.getText());
+    myKoridor.get(slideNum-1).totalHalteBack = int(in2.getText());
   }
-  println(myKoridor[slideNum-1].totalHalteBack);
-  println(myKoridor[slideNum-1].totalHalteBack);
-
+  println(myKoridor.get(slideNum-1).totalHalteBack);
+  println(myKoridor.get(slideNum-1).totalHalteBack);
+  
   newHalteWindow = GWindow.getWindow(this, "edit halte", 120, 20, 500, 300, JAVA2D);
   newHalteWindow.noLoop();
   newHalteWindow.setActionOnClose(G4P.CLOSE_WINDOW);
@@ -224,14 +227,14 @@ void createListHalte() {
   panelHalte = new GPanel(newHalteWindow, 0, 0, newHalteWindow.width - 20, newHalteWindow.height, "here");
   panelHalte.setOpaque(false);
 
-  inputHalteGo = new GTextField[myKoridor[slideNum-1].totalHalteGo];
-  inputHalteBack = new GTextField[myKoridor[slideNum-1].totalHalteBack];  
-  GLabel[] labelHalteGo = new GLabel[myKoridor[slideNum-1].totalHalteGo];
-  GLabel[] labelHalteBack = new GLabel[myKoridor[slideNum-1].totalHalteBack];
+  inputHalteGo = new GTextField[myKoridor.get(slideNum-1).totalHalteGo];
+  inputHalteBack = new GTextField[myKoridor.get(slideNum-1).totalHalteBack];  
+  GLabel[] labelHalteGo = new GLabel[myKoridor.get(slideNum-1).totalHalteGo];
+  GLabel[] labelHalteBack = new GLabel[myKoridor.get(slideNum-1).totalHalteBack];
 
   GTabManager tabHalte = new GTabManager();
 
-  for (int i=0; i<myKoridor[slideNum-1].totalHalteGo; i++) {
+  for (int i=0; i<myKoridor.get(slideNum-1).totalHalteGo; i++) {
     inputHalteGo[i] = new GTextField(newHalteWindow, 10, 20 + (i*40), 360, 20);
     inputHalteGo[i].setOpaque(false);
     inputHalteGo[i].setPromptText("input nama halte " +(i+1) +" (jalur pergi)");
@@ -247,7 +250,7 @@ void createListHalte() {
     panelHalte.addControl(labelHalteGo[i]);
     tabHalte.addControl(inputHalteGo[i]);
   }
-  for (int i=0; i<myKoridor[slideNum-1].totalHalteBack; i++) {
+  for (int i=0; i<myKoridor.get(slideNum-1).totalHalteBack; i++) {
     inputHalteBack[i] = new GTextField(newHalteWindow, 10, (60 + inputHalteGo[inputHalteGo.length-1].getY()) + (i*40), 360, 20);
     inputHalteBack[i].setOpaque(false);
     inputHalteBack[i].setPromptText("input nama halte " +(i+1) +" (jalur pulang)");
@@ -269,7 +272,7 @@ void createListHalte() {
   labelKoridorTitle.setLocalColorScheme(int(random(0, 7)));
   labelKoridorTitle.setTextAlign(GAlign.CENTER, GAlign.TOP);
   labelKoridorTitle.setFont(GuiUbu14);
-  labelKoridorTitle.setText("koridor " +myKoridor[slideNum-1].namaKoridor);
+  labelKoridorTitle.setText("koridor " +myKoridor.get(slideNum-1).namaKoridor);
 
   GButton saveHalte = new GButton(newHalteWindow, newHalteWindow.width - 90, newHalteWindow.height - 40, 60, 25);
   saveHalte.setText("save");
@@ -278,23 +281,23 @@ void createListHalte() {
   saveHalte.setFont(GuiUbu11);
 
   //load pre-data to input
-  if (myKoridor[slideNum-1].namaHalteGo.size() <= myKoridor[slideNum-1].totalHalteGo) {
-    for (int i=0; i<myKoridor[slideNum-1].namaHalteGo.size(); i++)
-      inputHalteGo[i].setText(myKoridor[slideNum-1].namaHalteGo.get(i));
-  } else if (myKoridor[slideNum-1].namaHalteGo.size() > myKoridor[slideNum-1].totalHalteGo) {
-    for (int i=0; i<myKoridor[slideNum-1].totalHalteGo; i++)
-      inputHalteGo[i].setText(myKoridor[slideNum-1].namaHalteGo.get(i));
+  if (myKoridor.get(slideNum-1).namaHalteGo.size() <= myKoridor.get(slideNum-1).totalHalteGo) {
+    for (int i=0; i<myKoridor.get(slideNum-1).namaHalteGo.size(); i++)
+      inputHalteGo[i].setText(myKoridor.get(slideNum-1).namaHalteGo.get(i));
+  } else if (myKoridor.get(slideNum-1).namaHalteGo.size() > myKoridor.get(slideNum-1).totalHalteGo) {
+    for (int i=0; i<myKoridor.get(slideNum-1).totalHalteGo; i++)
+      inputHalteGo[i].setText(myKoridor.get(slideNum-1).namaHalteGo.get(i));
   }
-  if (myKoridor[slideNum-1].namaHalteBack.size() <= myKoridor[slideNum-1].totalHalteBack) {
-    for (int i=0; i<myKoridor[slideNum-1].namaHalteBack.size(); i++)
-      inputHalteBack[i].setText(myKoridor[slideNum-1].namaHalteBack.get(i));
-  } else if (myKoridor[slideNum-1].namaHalteBack.size() > myKoridor[slideNum-1].totalHalteBack) {
-    for (int i=0; i<myKoridor[slideNum-1].totalHalteBack; i++)
-      inputHalteBack[i].setText(myKoridor[slideNum-1].namaHalteBack.get(i));
+  if (myKoridor.get(slideNum-1).namaHalteBack.size() <= myKoridor.get(slideNum-1).totalHalteBack) {
+    for (int i=0; i<myKoridor.get(slideNum-1).namaHalteBack.size(); i++)
+      inputHalteBack[i].setText(myKoridor.get(slideNum-1).namaHalteBack.get(i));
+  } else if (myKoridor.get(slideNum-1).namaHalteBack.size() > myKoridor.get(slideNum-1).totalHalteBack) {
+    for (int i=0; i<myKoridor.get(slideNum-1).totalHalteBack; i++)
+      inputHalteBack[i].setText(myKoridor.get(slideNum-1).namaHalteBack.get(i));
   }
 
   //add handler to the last input
-  inputHalteBack[myKoridor[slideNum-1].totalHalteBack-1].addEventHandler(this, "halteEnterHandler");
+  inputHalteBack[myKoridor.get(slideNum-1).totalHalteBack-1].addEventHandler(this, "halteEnterHandler");
   newHalteWindow.loop();
 }
 GWindow newWriteToSDWindow;
@@ -329,8 +332,8 @@ public void createWriteToSDWindow() {
 }
 //load pre data new setting wizard
 public void loadPreDataNewWizard() {
-  inputA.setText(myKoridor[slideNum-1].namaKoridor);
-  if (myKoridor[slideNum-1].choice)
+  inputA.setText(myKoridor.get(slideNum-1).namaKoridor);
+  if (myKoridor.get(slideNum-1).choice)
     yesOptionFunction();
   else
     noOptionFunction();
@@ -353,39 +356,39 @@ public void loadPreDataNewWizard3() {
 }
 //halte edit function
 public void saveCurrentHalte() {
-  if (myKoridor[slideNum-1].namaHalteGo.size() == myKoridor[slideNum-1].totalHalteGo) {
+  if (myKoridor.get(slideNum-1).namaHalteGo.size() == myKoridor.get(slideNum-1).totalHalteGo) {
     //set data 
-    for (int i=0; i<myKoridor[slideNum-1].totalHalteGo; i++)
-      myKoridor[slideNum-1].namaHalteGo.set(i, inputHalteGo[i].getText());
-  } else if (myKoridor[slideNum-1].namaHalteGo.size() < myKoridor[slideNum-1].totalHalteGo) {
+    for (int i=0; i<myKoridor.get(slideNum-1).totalHalteGo; i++)
+      myKoridor.get(slideNum-1).namaHalteGo.set(i, inputHalteGo[i].getText());
+  } else if (myKoridor.get(slideNum-1).namaHalteGo.size() < myKoridor.get(slideNum-1).totalHalteGo) {
     //remove data then add new data
-    myKoridor[slideNum-1].namaHalteGo.clear();
-    for (int i=0; i<myKoridor[slideNum-1].totalHalteGo; i++)
-      myKoridor[slideNum-1].namaHalteGo.append(inputHalteGo[i].getText());
-  } else if (myKoridor[slideNum-1].namaHalteGo.size() > myKoridor[slideNum-1].totalHalteGo) {
+    myKoridor.get(slideNum-1).namaHalteGo.clear();
+    for (int i=0; i<myKoridor.get(slideNum-1).totalHalteGo; i++)
+      myKoridor.get(slideNum-1).namaHalteGo.append(inputHalteGo[i].getText());
+  } else if (myKoridor.get(slideNum-1).namaHalteGo.size() > myKoridor.get(slideNum-1).totalHalteGo) {
     //remove data then add new data
-    myKoridor[slideNum-1].namaHalteGo.clear();
-    for (int i=0; i<myKoridor[slideNum-1].totalHalteGo; i++)
-      myKoridor[slideNum-1].namaHalteGo.append(inputHalteGo[i].getText());
+    myKoridor.get(slideNum-1).namaHalteGo.clear();
+    for (int i=0; i<myKoridor.get(slideNum-1).totalHalteGo; i++)
+      myKoridor.get(slideNum-1).namaHalteGo.append(inputHalteGo[i].getText());
   }
 
-  printArray(myKoridor[slideNum-1].namaHalteGo);
-  if (myKoridor[slideNum-1].namaHalteBack.size() == myKoridor[slideNum-1].totalHalteBack) {
+  printArray(myKoridor.get(slideNum-1).namaHalteGo);
+  if (myKoridor.get(slideNum-1).namaHalteBack.size() == myKoridor.get(slideNum-1).totalHalteBack) {
     //set data 
-    for (int i=0; i<myKoridor[slideNum-1].totalHalteBack; i++)
-      myKoridor[slideNum-1].namaHalteBack.set(i, inputHalteBack[i].getText());
-  } else if (myKoridor[slideNum-1].namaHalteBack.size() < myKoridor[slideNum-1].totalHalteBack) {
+    for (int i=0; i<myKoridor.get(slideNum-1).totalHalteBack; i++)
+      myKoridor.get(slideNum-1).namaHalteBack.set(i, inputHalteBack[i].getText());
+  } else if (myKoridor.get(slideNum-1).namaHalteBack.size() < myKoridor.get(slideNum-1).totalHalteBack) {
     //remove data then add new data
-    myKoridor[slideNum-1].namaHalteBack.clear();
-    for (int i=0; i<myKoridor[slideNum-1].totalHalteBack; i++)
-      myKoridor[slideNum-1].namaHalteBack.append(inputHalteBack[i].getText());
-  } else if (myKoridor[slideNum-1].namaHalteBack.size() > myKoridor[slideNum-1].totalHalteBack) {
+    myKoridor.get(slideNum-1).namaHalteBack.clear();
+    for (int i=0; i<myKoridor.get(slideNum-1).totalHalteBack; i++)
+      myKoridor.get(slideNum-1).namaHalteBack.append(inputHalteBack[i].getText());
+  } else if (myKoridor.get(slideNum-1).namaHalteBack.size() > myKoridor.get(slideNum-1).totalHalteBack) {
     //remove data then add new data
-    myKoridor[slideNum-1].namaHalteBack.clear();
-    for (int i=0; i<myKoridor[slideNum-1].totalHalteBack; i++)
-      myKoridor[slideNum-1].namaHalteBack.append(inputHalteBack[i].getText());
+    myKoridor.get(slideNum-1).namaHalteBack.clear();
+    for (int i=0; i<myKoridor.get(slideNum-1).totalHalteBack; i++)
+      myKoridor.get(slideNum-1).namaHalteBack.append(inputHalteBack[i].getText());
   }
-  printArray(myKoridor[slideNum-1].namaHalteBack);
+  printArray(myKoridor.get(slideNum-1).namaHalteBack);
   newHalteWindow.close();
   newHalteWindow = null;
 }
@@ -394,11 +397,13 @@ public void saveCurrentHalte() {
 public void continueButtonFuntion() {
   korNum = int(inputA.getText());
   if (korNum != 0 || !inputA.getText().isEmpty()) {
-    myKoridor = new koridor[korNum];
-    println(myKoridor.length);
+    myKoridor = new ArrayList<koridor>();
+    //new koridor[korNum];
+    //println(myKoridor.length);
     newSetSlideNum = 1;
     slideNum += 1;
-    myKoridor[slideNum-1] = new koridor();
+    myKoridor.add(new koridor());
+    //myKoridor[slideNum-1] = new koridor();
     inputA.setPromptText("Nama Koridor " +slideNum);
     loadPreDataNewWizard();
     GUINewSetSlideNum1();
@@ -407,21 +412,25 @@ public void continueButtonFuntion() {
 public void nextButtonFuntion() {
   if (newSetSlideNum == 1) {
     if (slideNum >= korNum) {
-      myKoridor[slideNum-1].namaKoridor = inputA.getText();
+      myKoridor.get(slideNum-1).namaKoridor = inputA.getText();
       newSetSlideNum = 2;
       GUINewSetSlideNum2();
       loadPreDataNewWizard2();
     } else {
       if (newSetSlideNum == 1) {
-        myKoridor[slideNum] = new koridor();
-        myKoridor[slideNum-1].namaKoridor = inputA.getText();
-        println(myKoridor[slideNum-1].namaKoridor);
+        //myKoridor[slideNum] = new koridor();
+        if(myKoridor.size() < korNum)
+        myKoridor.add(new koridor());
+        //if(myKoridor.size() >= korNum)
+        //myKoridor.set(korNum, new koridor());
+        myKoridor.get(slideNum-1).namaKoridor = inputA.getText();
+        println(myKoridor.get(slideNum-1).namaKoridor);
         if (in2.isVisible()) {
-          myKoridor[slideNum-1].totalHalteGo = int(in1.getText());
-          myKoridor[slideNum-1].totalHalteBack = int(in2.getText());
+          myKoridor.get(slideNum-1).totalHalteGo = int(in1.getText());
+          myKoridor.get(slideNum-1).totalHalteBack = int(in2.getText());
         } else {
-          myKoridor[slideNum-1].totalHalteGo = int(in1.getText());
-          myKoridor[slideNum-1].totalHalteBack = int(in1.getText());
+          myKoridor.get(slideNum-1).totalHalteGo = int(in1.getText());
+          myKoridor.get(slideNum-1).totalHalteBack = int(in1.getText());
         }
       }
       slideNum += 1;
@@ -471,6 +480,7 @@ public void nextButtonFuntion() {
         }
       }
       saveTextFunction();
+      println(myKoridor.size());
       newSettingWindow.close(); 
       newSettingWindow = null;
       println("saved to " +newSettingFilePath);
@@ -481,11 +491,13 @@ public void nextButtonFuntion() {
 }
 public void backButtonFunction() {
   if (newSetSlideNum == 1) {
+    myKoridor.remove(slideNum-1);
     inputA.setText("");
     slideNum -= 1;
     if (slideNum < 1) {
       newSetSlideNum = 0;
       slideNum = 0;
+      myKoridor.remove(slideNum-1);
       GUINewSetSlideNum0();
       inputA.setPromptText("Input Jumlah Koridor");
     } else {
@@ -525,35 +537,156 @@ public void yesOptionFunction() {
   if (in2 != null)
     in2.setVisible(false);
   editHalte.setVisible(true);
+  muncul = false;
 }
 public void noOptionFunction() {
   in1.setVisible(true);
   in2.setVisible(true);
   editHalte.setVisible(true);
+  muncul = true;
 }
 
-public void loadSettingWizard(){
+public void loadSettingWizard() {
   selectInput("Select a file to process:", "loadSettingWizardLoaded");
 }
+GWindow loadSettingWizardWindow;
+GTextField[] me;
+GButton[] butMe, delMe;
+GPanel groupLoadSettingWizard;
+int totalKor = 0;
 void loadSettingWizardLoaded(File selection) {
   if (selection == null) {
     println("Window was closed or the user hit cancel.");
   } else {
     loadSettingWizardPath = selection.getAbsolutePath();
+    int korCount = 0; 
+    boolean change = false;
     if (!loadSettingWizardPath.isEmpty()) {
-    String lines[] = loadStrings(loadSettingWizardPath);
-    println(lines.length);
-    for (int i = 0; i < lines.length; i++) {
-      //println(lines[i]);
-      String[] list = split(lines[i], ":");
-      
-      for (int j=0; j<list.length; j++) {
-        list[j] = trim(list[j]);
-       // String[] koridorFiles = loadStrings(path +"\\" +list[j]);
-       // loadFilesToArea(koridorFiles, j, i);
+      String lines[] = loadStrings(loadSettingWizardPath);
+      println(lines.length);
+      for (int i = 0; i < lines.length; i++) {
+        String[] list = split(lines[i], ":");
+        for (int j=0; j<list.length; j++) {
+          list[j] = trim(list[j]);
+          if (i == 0 && j == 1) {
+            totalKor = int(list[j]);
+          } else if (i == 1 && j == 1) {
+            String[] newlist = split(list[j], ",");
+            //myKoridor = new koridor[newlist.length];
+            for (int k=0; k<newlist.length; k++) {
+              //myKoridor[k] = new koridor();
+              myKoridor.get(k).namaKoridor = trim(newlist[k]);
+            }
+          } else if (i == lines.length-2 && j == 1) {
+            String[] newlist = split(list[j], ",");
+            for (int k=0; k<newlist.length; k++) {
+              if (textIndoor.size() < newlist.length)
+                textIndoor.append(trim(newlist[k]));
+              else if (textIndoor.size() >= newlist.length)
+                textIndoor.set(k, trim(newlist[k]));
+            }
+          } else if (i == lines.length-1 && j == 1) {
+            String[] newlist = split(list[j], ",");
+            for (int k=0; k<newlist.length; k++) {
+              if (textOutdoor.size() < newlist.length)
+                textOutdoor.append(trim(newlist[k]));
+              else if (textOutdoor.size() >= newlist.length)
+                textOutdoor.set(k, trim(newlist[k]));
+            }
+          } else {
+            if ( i % 2 == 0 && j == 1) {
+              if (!change) {
+                myKoridor.get(korCount).totalHalteGo = int(list[j]);
+              } else if (change) {
+                myKoridor.get(korCount).totalHalteBack = int(list[j]);
+              }
+            } else if ( i % 2 != 0 && j == 1) {
+              if (!change) {
+                String[] newlist = split(list[j], ",");
+                for (int k=0; k<newlist.length; k++) {
+                  if (myKoridor.get(korCount).namaHalteGo.size() < newlist.length)
+                    myKoridor.get(korCount).namaHalteGo.append(trim(newlist[k]));
+                  else if (myKoridor.get(korCount).namaHalteGo.size() >= newlist.length)
+                    myKoridor.get(korCount).namaHalteGo.set(k, trim(newlist[k]));
+                }
+                //printArray(myKoridor[korCount].namaHalteGo);
+                change = true;
+              } else if (change) {
+                String[] newlist = split(list[j], ",");
+                for (int k=0; k<newlist.length; k++) {
+                  if (myKoridor.get(korCount).namaHalteBack.size() < newlist.length)
+                    myKoridor.get(korCount).namaHalteBack.append(trim(newlist[k]));
+                  else if (myKoridor.get(korCount).namaHalteBack.size() >= newlist.length)
+                    myKoridor.get(korCount).namaHalteBack.set(k, trim(newlist[k]));
+                }
+                //printArray(myKoridor[korCount].namaHalteBack);
+                change = false;
+                korCount ++;
+              }
+            }
+          }
+        }
+        //printArray(list);
       }
-      printArray(list);
-    }
-    }
+    }    
+    //for (int i=0; i<myKoridor.length; i++) {
+    //  printArray(myKoridor[i].namaKoridor);
+    //  println(myKoridor[i].totalHalteGo);
+    //  printArray(myKoridor[i].namaHalteGo);
+    //  println(myKoridor[i].totalHalteBack);
+    //  printArray(myKoridor[i].namaHalteBack);
+    //}
+    printArray(textIndoor); 
+    printArray(textOutdoor);
+    //create UI
+    loadSettingWizardWindow = GWindow.getWindow(this, "list koridor", 150, 20, 500, 300, JAVA2D);
+    loadSettingWizardWindow.noLoop();
+    loadSettingWizardWindow.setActionOnClose(G4P.CLOSE_WINDOW);
+    loadSettingWizardWindow.addDrawHandler(this, "loadSettingWizardHandler");
+    loadSettingWizardWindow.addMouseHandler(this, "loadSettingWizardWindowMouseHandler");
+
+    me = new GTextField[totalKor];
+    butMe = new GButton[totalKor]; delMe = new GButton[totalKor];
+    groupLoadSettingWizard = new GPanel(loadSettingWizardWindow, 0, 0, loadSettingWizardWindow.width, loadSettingWizardWindow.height,"here");
+    groupLoadSettingWizard.setOpaque(false);
+    for (int i=0; i<me.length; i++) {
+      me[i] = new GTextField(loadSettingWizardWindow, 10, 20 +(i*30), 200, 20);
+      me[i].setOpaque(false);
+      me[i].setText("koridor " +myKoridor.get(i).namaKoridor);
+      me[i].setTextEditEnabled(false);
+
+      butMe[i] = new GButton(loadSettingWizardWindow, me[i].getX() + me[i].getWidth() + 10, me[i].getY(), 60, 20);
+      butMe[i].setOpaque(false);
+      butMe[i].setText("edit");
+      butMe[i].addEventHandler(this, "butMeButtonHandler");
+      butMe[i].tagNo = i;
+      
+      delMe[i] = new GButton(loadSettingWizardWindow, butMe[i].getX() + butMe[i].getWidth() + 10, me[i].getY(), 60, 20);
+      delMe[i].setOpaque(false);
+      delMe[i].setText("delete");
+      delMe[i].addEventHandler(this, "delMeButtonHandler");
+      delMe[i].tagNo = i;
+      
+      groupLoadSettingWizard.addControls(me[i], butMe[i], delMe[i]);
+    }     
+
+    GButton buttonSaveLoadSettingWizard = new GButton(loadSettingWizardWindow, loadSettingWizardWindow.width-100, loadSettingWizardWindow.height-40, 60, 25);
+    buttonSaveLoadSettingWizard.setOpaque(false);
+    buttonSaveLoadSettingWizard.setText("save");
+    buttonSaveLoadSettingWizard.addEventHandler(this, "buttonSaveLoadSettingWizardHandler");
+    
+    loadSettingWizardWindow.loop();
   }
+}
+GWindow editHalteAndKoridorWindow;
+
+public void editHalteAndKoridor(int i) {
+  //create UI
+  editHalteAndKoridorWindow = GWindow.getWindow(this, "koridor " +myKoridor.get(i).namaKoridor, 500, 20, 500, 300, JAVA2D);
+  editHalteAndKoridorWindow.noLoop();
+  editHalteAndKoridorWindow.setActionOnClose(G4P.CLOSE_WINDOW);
+  editHalteAndKoridorWindow.addDrawHandler(this, "editHalteAndKoridorWindowHandler");
+  editHalteAndKoridorWindow.addMouseHandler(this, "editHalteAndKoridorWindowMouseHandler");
+
+  editHalteAndKoridorWindow.loop();
 }

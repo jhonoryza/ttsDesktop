@@ -1,0 +1,12 @@
+total koridor : 2
+list koridor : 2,dsd
+total halte (jalur pergi) koridor 0 : 2
+list halte : adsa,qweq
+total halte (jalur pulang) koridor 0 : 2
+list halte : dqwd,wqeq
+total halte (jalur pergi) koridor 1 : 2
+list halte : adsad,qwq
+total halte (jalur pulang) koridor 1 : 2
+list halte : qdwqd,eqweq
+list text indoor : adqdq,dqwd,dqdqw
+list text outoor : sdqd,qwdq,qwe12
