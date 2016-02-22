@@ -51,7 +51,7 @@ public void customGUI() {
   buttonVoice.setFont(GuiUbu11);
   buttonSD.setFont(GuiUbu11);
   buttonExit.setFont(GuiUbu11);
-  GButton.useRoundCorners(false);
+  //GButton.useRoundCorners(false);
   mainGroup = new GGroup(this);
   mainGroup.addControls(buttonNew, buttonLoad, buttonVoice, buttonSD, buttonExit);
 }
