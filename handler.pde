@@ -97,6 +97,9 @@ public void delMeButtonHandler(GButton source, GEvent event) {
     butMe[i] = null;
     me[i].dispose();
     me[i] = null;
+    labelMe[i].dispose();
+    labelMe[i] = null;
+    
     if (source.tagNo == i) {
       myKoridor.remove(i);
       korNum --;
