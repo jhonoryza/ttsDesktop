@@ -47,7 +47,7 @@ public void createGUI(){
   G4P.messagesEnabled(false);
   G4P.setGlobalColorScheme(8);
   G4P.setCursor(ARROW);
-  surface.setTitle("Configurator");
+  surface.setTitle("Configurator"); 
   buttonNew = new GButton(this, 20, 30, 100, 30);
   buttonNew.setText("New Setting");
   buttonNew.addEventHandler(this, "buttonNew_click");

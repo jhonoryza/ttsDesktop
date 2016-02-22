@@ -1,14 +1,15 @@
 // Need G4P library
 import g4p_controls.*;
 import java.awt.Font;
-
+import javax.swing.JOptionPane;
 //public variable
 String voicePitch, voiceRate, voiceVolume, newSettingFilePath, loadSettingPath, loadSettingWizardPath;
 StringList textIndoor, textOutdoor;
-
+GGroup mainGroup;
 public void setup() {
   newSettingFilePath = sketchPath() +"/data/my.cfg";
-  loadSettingPath = ""; loadSettingWizardPath = "";
+  loadSettingPath = ""; 
+  loadSettingWizardPath = "";
   textIndoor = new StringList();
   textOutdoor = new StringList();
   loadCurrentFont();
@@ -18,6 +19,7 @@ public void setup() {
   // Place your setup code here
   println(sketchPath());
   loadVoiceSetting();
+  
 }
 public void draw() {
   background(240);
@@ -34,6 +36,12 @@ public void draw() {
   text("Config Apps", width/2-35, 15);
   textSize(10);
   text("copyright \u00a9 2016 GTI", width/1.5, height-5);
+
+  if ((loadSettingWizardWindow != null && loadSettingWizardWindow.isVisible()) || (voiceSettingWindow != null && voiceSettingWindow.isVisible()) 
+  || (newSettingWindow != null && newSettingWindow.isVisible()) || (newWriteToSDWindow != null && newWriteToSDWindow.isVisible()) )
+   mainGroup.setEnabled(false);
+  else
+   mainGroup.setEnabled(true);
 }
 
 // Use this method to add additional statements
@@ -45,10 +53,8 @@ public void customGUI() {
   buttonSD.setFont(GuiUbu11);
   buttonExit.setFont(GuiUbu11);
   GButton.useRoundCorners(false);
-  //buttonLoad.useRoundCorners(false);
-  //buttonVoice.useRoundCorners(false);
-  //buttonSD.useRoundCorners(false);
-  //buttonExit.useRoundCorners(false);
+  mainGroup = new GGroup(this);
+  mainGroup.addControls(buttonNew, buttonLoad, buttonVoice, buttonSD, buttonExit);
 }
 
 //handler window
@@ -131,7 +137,7 @@ synchronized public void win_drawVoiceSetting(PApplet appc, GWinData data) {
   appc.textSize(10);
   appc.text(sketchPath() +"/data/voice.cfg", 0, appc.height-7);
 }
-synchronized public void loadSettingWizardHandler(PApplet appc, GWinData data){
+synchronized public void loadSettingWizardHandler(PApplet appc, GWinData data) {
   appc.background(240);
   appc.noStroke();
 
@@ -140,14 +146,16 @@ synchronized public void loadSettingWizardHandler(PApplet appc, GWinData data){
   appc.rect(appc.width-140, 0, 160, appc.height);
 
   //text
-  //appc.fill(0);
-  //textFont(ubu11);
-  //appc.text("Koridor List", 10 , 20);
+  appc.fill(0);
+  textFont(ubu11);
+  appc.text(" save current \nconfiguration", appc.width-110, appc.height-90);
+  appc.text(" add new \n  koridor", appc.width-100, appc.height-270);
+  appc.text(" save location", appc.width-110, appc.height-160);
 }
-synchronized public void editHalteAndKoridorWindowHandler(PApplet appc, GWinData data){
+synchronized public void editHalteAndKoridorWindowHandler(PApplet appc, GWinData data) {
   appc.background(240);
   appc.noStroke();
-  
+
   appc.fill(0);
   textFont(ubu11);
   //appc.text("Koridor List", 10 , 20)

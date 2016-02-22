@@ -81,7 +81,7 @@ void fileSelected(File selection) {
   }
 }
 public void butMeButtonHandler(GButton source, GEvent event) {
-  for (int i=0; i<totalKor; i++) {
+  for (int i=0; i<korNum; i++) {
     if (source.tagNo == i) {
       println("tag "+i +" clicked"); 
       editHalteAndKoridor(i);
@@ -89,7 +89,7 @@ public void butMeButtonHandler(GButton source, GEvent event) {
   }
 }
 public void delMeButtonHandler(GButton source, GEvent event) {
-  for (int i=0; i<totalKor; i++) {
+  for (int i=0; i<korNum; i++) {
     if (source.tagNo == i) {
       delMe[i].dispose();
       delMe[i] = null;
@@ -97,10 +97,16 @@ public void delMeButtonHandler(GButton source, GEvent event) {
       butMe[i] = null;
       me[i].dispose();
       me[i] = null;
+      myKoridor.remove(i);
+      korNum --;
     }
   }
 }
 public void buttonSaveLoadSettingWizardHandler(GButton source, GEvent event) {
+  saveTextFunction();
+  loadSettingWizardWindow.close(); 
+  loadSettingWizardWindow = null;
+  println("saved to " +newSettingFilePath);
 }
 //handler option
 public void optYesHandler(GOption source, GEvent event) {
