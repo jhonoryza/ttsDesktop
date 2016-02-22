@@ -19,7 +19,6 @@ public void setup() {
   // Place your setup code here
   println(sketchPath());
   loadVoiceSetting();
-  
 }
 public void draw() {
   background(240);
@@ -38,10 +37,10 @@ public void draw() {
   text("copyright \u00a9 2016 GTI", width/1.5, height-5);
 
   if ((loadSettingWizardWindow != null && loadSettingWizardWindow.isVisible()) || (voiceSettingWindow != null && voiceSettingWindow.isVisible()) 
-  || (newSettingWindow != null && newSettingWindow.isVisible()) || (newWriteToSDWindow != null && newWriteToSDWindow.isVisible()) )
-   mainGroup.setEnabled(false);
+    || (newSettingWindow != null && newSettingWindow.isVisible()) || (newWriteToSDWindow != null && newWriteToSDWindow.isVisible()) )
+    mainGroup.setEnabled(false);
   else
-   mainGroup.setEnabled(true);
+    mainGroup.setEnabled(true);
 }
 
 // Use this method to add additional statements
@@ -146,15 +145,19 @@ synchronized public void loadSettingWizardHandler(PApplet appc, GWinData data) {
   appc.rect(appc.width-140, 0, 160, appc.height);
 
   //text
-  appc.fill(0);
-  textFont(ubu11);
-  appc.text(" save current \nconfiguration", appc.width-110, appc.height-90);
-  appc.text(" add new \n  koridor", appc.width-100, appc.height-270);
-  appc.text(" save location", appc.width-110, appc.height-160);
+  //appc.fill(0);
+  //textFont(ubu11);
+  //appc.text(" save current \nconfiguration", appc.width-110, appc.height-90);
+  //appc.text(" add new \n  koridor", appc.width-100, appc.height-270);
+  //appc.text("     save as", appc.width-110, appc.height-160);
 }
 synchronized public void editHalteAndKoridorWindowHandler(PApplet appc, GWinData data) {
   appc.background(240);
   appc.noStroke();
+
+  //border
+  appc.fill(255, 255, 255, 200);
+  appc.rect(appc.width-140, 0, 160, appc.height);
 
   appc.fill(0);
   textFont(ubu11);

@@ -89,24 +89,75 @@ public void butMeButtonHandler(GButton source, GEvent event) {
   }
 }
 public void delMeButtonHandler(GButton source, GEvent event) {
-  for (int i=0; i<korNum; i++) {
+  int lastKorNum = korNum;
+  for (int i=0; i<lastKorNum; i++) {
+    delMe[i].dispose();
+    delMe[i] = null;
+    butMe[i].dispose();
+    butMe[i] = null;
+    me[i].dispose();
+    me[i] = null;
     if (source.tagNo == i) {
-      delMe[i].dispose();
-      delMe[i] = null;
-      butMe[i].dispose();
-      butMe[i] = null;
-      me[i].dispose();
-      me[i] = null;
       myKoridor.remove(i);
       korNum --;
     }
   }
+  refreshLoadWizard();
 }
 public void buttonSaveLoadSettingWizardHandler(GButton source, GEvent event) {
-  saveTextFunction();
-  loadSettingWizardWindow.close(); 
-  loadSettingWizardWindow = null;
-  println("saved to " +newSettingFilePath);
+  selectOutput("Save as:", "fileLoadSettingWizard");
+}
+public void buttonLocationLoadSettingWizardHandler(GButton source, GEvent event) {
+  //selectOutput("Save as:", "fileLoadSettingWizard");
+}
+void fileLoadSettingWizard(File selection) {
+  if (selection == null) {
+    println("Window was closed or the user hit cancel.");
+  } else {
+    browsed = true;
+    newSettingFilePath = selection.getAbsolutePath();
+    saveTextFunction();
+    println("saved to " +newSettingFilePath);
+    JOptionPane.showMessageDialog(null, "saved to " +newSettingFilePath, "save path", JOptionPane.WARNING_MESSAGE);
+    loadSettingWizardWindow.close(); 
+    loadSettingWizardWindow = null;
+  }
+}
+public void myButtonHandler(GButton source, GEvent event) {
+  saveTemporary();
+}
+public void delMyFieldHandler(GButton source, GEvent event) {
+  int totalHalteGo = myKoridor.get(currentHal).totalHalteGo;
+  int totalHalteBack = myKoridor.get(currentHal).totalHalteBack;
+  int total = totalHalteGo+totalHalteBack+1;
+  for (int j=0; j<total; j++) {
+    if (j > 0 && j<=totalHalteGo) {
+      int k = j - 1;
+      myField[j].dispose();
+      myLabelField[j].dispose();
+      delMyField[j].dispose();
+      myField[j] = null;
+      myLabelField[j] = null;
+      delMyField[j] = null;
+      if (source.tagNo == j) {
+        myKoridor.get(currentHal).namaHalteGo.remove(k);
+        myKoridor.get(currentHal).totalHalteGo --;
+      }
+    } else if (j > totalHalteGo) {
+      int k = j - (totalHalteGo+1);
+      myField[j].dispose();
+      myLabelField[j].dispose();
+      delMyField[j].dispose();
+      myField[j] = null;
+      myLabelField[j] = null;
+      delMyField[j] = null;
+      if (source.tagNo == j) {
+        myKoridor.get(currentHal).namaHalteBack.remove(k);
+        myKoridor.get(currentHal).totalHalteBack --;
+      }
+    }
+  }
+  refreshEditHalteAndKoridor();
 }
 //handler option
 public void optYesHandler(GOption source, GEvent event) {
@@ -163,5 +214,10 @@ public void newHalteWindowMouseHandler(PApplet app, GWinData data, MouseEvent me
 public void loadSettingWizardWindowMouseHandler(PApplet app, GWinData data, MouseEvent mevent) {
   if (mevent.getAction() == MouseEvent.WHEEL) {
     groupLoadSettingWizard.moveTo(0, groupLoadSettingWizard.getY() +(10*mevent.getCount()));
+  }
+}
+public void editHalteAndKoridorWindowMouseHandler(PApplet app, GWinData data, MouseEvent mevent) {
+  if (mevent.getAction() == MouseEvent.WHEEL) {
+    editHalteAndKoridorPanel.moveTo(0, editHalteAndKoridorPanel.getY() +(10*mevent.getCount()));
   }
 }
