@@ -51,7 +51,7 @@ public void customGUI() {
   buttonVoice.setFont(GuiUbu11);
   buttonSD.setFont(GuiUbu11);
   buttonExit.setFont(GuiUbu11);
-  //GButton.useRoundCorners(false);
+  GButton.useRoundCorners(false);
   mainGroup = new GGroup(this);
   mainGroup.addControls(buttonNew, buttonLoad, buttonVoice, buttonSD, buttonExit);
 }
@@ -158,10 +158,38 @@ synchronized public void editHalteAndKoridorWindowHandler(PApplet appc, GWinData
   //border
   appc.fill(255, 255, 255, 200);
   appc.rect(appc.width-140, 0, 160, appc.height);
+}
+synchronized public void addNewHalteWindowHandler(PApplet appc, GWinData data) {
+  appc.background(240);
+  appc.noStroke();
 
-  appc.fill(0);
-  textFont(ubu11);
-  //appc.text("Koridor List", 10 , 20)
+  //border
+  appc.fill(255, 255, 255, 200);
+  appc.rect(appc.width-140, 0, 160, appc.height);
+}
+synchronized public void addNewKoridorWindowHandler(PApplet appc, GWinData data) {
+  appc.background(240);
+  appc.noStroke();
+
+  //border
+  appc.fill(255, 255, 255, 200);
+  appc.rect(appc.width-140, 0, 160, appc.height);
+}
+synchronized public void editTextIndoorWindowHandler(PApplet appc, GWinData data) {
+  appc.background(240);
+  appc.noStroke();
+
+  //border
+  appc.fill(255, 255, 255, 200);
+  appc.rect(appc.width-140, 0, 160, appc.height);
+}
+synchronized public void editTextOutdoorWindowHandler(PApplet appc, GWinData data) {
+  appc.background(240);
+  appc.noStroke();
+
+  //border
+  appc.fill(255, 255, 255, 200);
+  appc.rect(appc.width-140, 0, 160, appc.height);
 }
 public void GUINewSetSlideNum0() {
   if (buttonNext != null && buttonBack != null && buttonContinue != null && optYes != null && optNo != null && in1 != null && in2 != null && editHalte != null) {

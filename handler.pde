@@ -92,14 +92,10 @@ public void delMeButtonHandler(GButton source, GEvent event) {
   int lastKorNum = korNum;
   for (int i=0; i<lastKorNum; i++) {
     delMe[i].dispose();
-    delMe[i] = null;
     butMe[i].dispose();
-    butMe[i] = null;
     me[i].dispose();
-    me[i] = null;
     labelMe[i].dispose();
-    labelMe[i] = null;
-    
+
     if (source.tagNo == i) {
       myKoridor.remove(i);
       korNum --;
@@ -130,37 +126,116 @@ public void myButtonHandler(GButton source, GEvent event) {
   saveTemporary();
 }
 public void delMyFieldHandler(GButton source, GEvent event) {
-  int totalHalteGo = myKoridor.get(currentHal).totalHalteGo;
-  int totalHalteBack = myKoridor.get(currentHal).totalHalteBack;
-  int total = totalHalteGo+totalHalteBack+1;
-  for (int j=0; j<total; j++) {
-    if (j > 0 && j<=totalHalteGo) {
+  resetEditHalteAndKoridor(source);
+}
+public void addMyButtonHandler(GButton source, GEvent event) {
+  createAddNewHalteWindow();
+}
+public void buttonCreateHalteHandler(GButton source, GEvent event) {
+  int halteMode = dropHalte.getSelectedIndex();
+  String indexHalte = fieldIndexHalte.getText();
+  String namaHalte = fieldNamaHalte.getText();
+  if (!indexHalte.isEmpty() && !namaHalte.isEmpty()) {
+    if (numberOrNot(indexHalte) && int(indexHalte) > 0) {
+      if (halteMode == 0) {
+        if (int(indexHalte)-1 < myKoridor.get(currentHal).totalHalteGo +1) {
+          clearEditKoridor();
+          myKoridor.get(currentHal).totalHalteGo ++;
+          myKoridor.get(currentHal).namaHalteGo.add(int(indexHalte)-1, namaHalte);
+        } else {
+          JOptionPane.showMessageDialog(null, "index number too high", "Error", JOptionPane.WARNING_MESSAGE);
+        }
+      } else if (halteMode == 1) {
+        if (int(indexHalte)-1 < myKoridor.get(currentHal).totalHalteBack +1) {
+          clearEditKoridor();
+          myKoridor.get(currentHal).totalHalteBack ++;
+          myKoridor.get(currentHal).namaHalteBack.add(int(indexHalte)-1, namaHalte);
+        } else {
+          JOptionPane.showMessageDialog(null, "index number too high", "Error", JOptionPane.WARNING_MESSAGE);
+        }
+      }      
+      addNewHalteWindow.close();
+      addNewHalteWindow = null; 
+      refreshEditHalteAndKoridor();
+    } else {
+      JOptionPane.showMessageDialog(null, "field cannot be empty, index must be number and greater than zero", "Error", JOptionPane.WARNING_MESSAGE);
+    }
+  } else {
+    JOptionPane.showMessageDialog(null, "field cannot be empty", "Error", JOptionPane.WARNING_MESSAGE);
+  }
+}
+void clearEditKoridor() {
+  int totHalteGo = myKoridor.get(currentHal).totalHalteGo;
+  int totHalteBack = myKoridor.get(currentHal).totalHalteBack;
+  int tot = totHalteGo+totHalteBack+1;
+  for (int j=0; j<tot; j++) {
+    if (j > 0 && j<=totHalteGo) {
       int k = j - 1;
       myField[j].dispose();
       myLabelField[j].dispose();
       delMyField[j].dispose();
-      myField[j] = null;
-      myLabelField[j] = null;
-      delMyField[j] = null;
-      if (source.tagNo == j) {
-        myKoridor.get(currentHal).namaHalteGo.remove(k);
-        myKoridor.get(currentHal).totalHalteGo --;
-      }
-    } else if (j > totalHalteGo) {
-      int k = j - (totalHalteGo+1);
+    } else if (j > totHalteGo) {
+      int k = j - (totHalteGo+1);
       myField[j].dispose();
       myLabelField[j].dispose();
       delMyField[j].dispose();
-      myField[j] = null;
-      myLabelField[j] = null;
-      delMyField[j] = null;
-      if (source.tagNo == j) {
-        myKoridor.get(currentHal).namaHalteBack.remove(k);
-        myKoridor.get(currentHal).totalHalteBack --;
-      }
     }
   }
-  refreshEditHalteAndKoridor();
+}
+public void buttonAddLoadSettingWizardHandler(GButton source, GEvent event) {
+  createAddNewKoridorWindow();
+}
+public void buttonCreateKoridorHandler(GButton source, GEvent event) {
+  String indexKoridor = fieldIndexKoridor.getText();
+  String namaKoridor = fieldNamaKoridor.getText();
+  if (!indexKoridor.isEmpty() && !namaKoridor.isEmpty()) {
+    if (numberOrNot(indexKoridor) && int(indexKoridor) > 0) {
+      if (int(indexKoridor)-1 < korNum +1) {        
+        clearKoridor();
+        korNum ++;
+        myKoridor.add(int(indexKoridor)-1, new koridor());
+        myKoridor.get(int(indexKoridor)-1).namaKoridor = namaKoridor;
+        addNewKoridorWindow.close();
+        addNewKoridorWindow = null;
+        refreshLoadWizard();
+      } else {
+        JOptionPane.showMessageDialog(null, "index numberr too high", "Error", JOptionPane.WARNING_MESSAGE);
+      }
+    } else {
+      JOptionPane.showMessageDialog(null, "field cannot be empty, index must be number and greater than zero", "Error", JOptionPane.WARNING_MESSAGE);
+    }
+  } else {
+    JOptionPane.showMessageDialog(null, "field cannot be empty", "Error", JOptionPane.WARNING_MESSAGE);
+  }
+}
+void clearKoridor() {
+  int lastKorNum = korNum;
+  for (int i=0; i<lastKorNum; i++) {
+    delMe[i].dispose();
+    butMe[i].dispose();
+    me[i].dispose();
+    labelMe[i].dispose();
+  }
+}
+public void buttonIndoorLoadSettingWizardHandler(GButton source, GEvent event) {
+  createEditTextIndoorWindow();
+}
+public void buttonSaveTextIndoorHandler(GButton source, GEvent event) {
+  for (int i=0; i<5; i++) {
+    textIndoor.set(i, fieldEditTextIndoor[i].getText());
+  }
+  editTextIndoorWindow.close();
+  editTextIndoorWindow = null;
+}
+public void buttonOutdoorLoadSettingWizardHandler(GButton source, GEvent event) {
+  createEditTextOutdoorWindow();
+}
+public void buttonSaveTextOutdoorHandler(GButton source, GEvent event) {
+  for (int i=0; i<5; i++) {
+    textOutdoor.set(i, fieldEditTextOutdoor[i].getText());
+  }
+  editTextOutdoorWindow.close();
+  editTextOutdoorWindow = null;
 }
 //handler option
 public void optYesHandler(GOption source, GEvent event) {

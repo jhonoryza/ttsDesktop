@@ -63,7 +63,10 @@ void saveTextFunction() {
       for (int j=0; j<myKoridor.get(i).totalHalteGo; j++) {
         if (j>0)
           data += ",";
-        data += myKoridor.get(i).namaHalteGo.get(j);
+        if (myKoridor.get(i).namaHalteGo.size() < 1)
+          data += "";
+        else
+          data += myKoridor.get(i).namaHalteGo.get(j);
       }
       output.println(data);
       data = "list halte : ";
@@ -71,7 +74,10 @@ void saveTextFunction() {
       for (int j=0; j<myKoridor.get(i).totalHalteBack; j++) {
         if (j>0)
           data += ",";
-        data += myKoridor.get(i).namaHalteBack.get(j);
+        if (myKoridor.get(i).namaHalteBack.size() < 1)
+          data += "";
+        else
+          data += myKoridor.get(i).namaHalteBack.get(j);
       }
       output.println(data);
       data = "list text indoor : ";
@@ -210,15 +216,34 @@ GPanel panelHalte;
 GTextField[] inputHalteGo;
 GTextField[] inputHalteBack;
 void createListHalte() {
-  myKoridor.get(slideNum-1).totalHalteGo = int(in1.getText());
-  if (!in2.isVisible()) {
-    myKoridor.get(slideNum-1).totalHalteBack = int(in1.getText());
-  } else {
-    myKoridor.get(slideNum-1).totalHalteBack = int(in2.getText());
+  //myKoridor.get(slideNum-1).totalHalteGo = int(in1.getText());
+  //if (!in2.isVisible()) {
+  //  myKoridor.get(slideNum-1).totalHalteBack = int(in1.getText());
+  //} else {
+  //  myKoridor.get(slideNum-1).totalHalteBack = int(in2.getText());
+  //}
+  //println(myKoridor.get(slideNum-1).totalHalteBack);
+  //println(myKoridor.get(slideNum-1).totalHalteBack);
+  if (optYes.isSelected()) {
+    if (!in1.getText().isEmpty() && int(in1.getText()) > 0 && numberOrNot(in1.getText())) {
+      myKoridor.get(slideNum-1).totalHalteGo = int(in1.getText());
+      myKoridor.get(slideNum-1).totalHalteBack = int(in1.getText());
+      createNewHalteWindow();
+    } else {
+      JOptionPane.showMessageDialog(null, "field cannot be empty and must be number greater than zero", "Error", JOptionPane.WARNING_MESSAGE);
+    }
+  } else if (optNo.isSelected()) {
+    if (!in1.getText().isEmpty() && int(in1.getText()) > 0 && numberOrNot(in1.getText())
+      && !in2.getText().isEmpty() && int(in2.getText()) > 0 && numberOrNot(in2.getText())) {
+      myKoridor.get(slideNum-1).totalHalteGo = int(in1.getText());
+      myKoridor.get(slideNum-1).totalHalteBack = int(in2.getText());
+      createNewHalteWindow();
+    } else {
+      JOptionPane.showMessageDialog(null, "field cannot be empty and must be number greater than zero", "Error", JOptionPane.WARNING_MESSAGE);
+    }
   }
-  println(myKoridor.get(slideNum-1).totalHalteBack);
-  println(myKoridor.get(slideNum-1).totalHalteBack);
-
+}
+void createNewHalteWindow() {
   newHalteWindow = GWindow.getWindow(this, "edit halte", 120, 20, 500, 300, JAVA2D);
   newHalteWindow.noLoop();
   newHalteWindow.setActionOnClose(G4P.CLOSE_WINDOW);
@@ -366,12 +391,12 @@ public void saveCurrentHalte() {
     //remove data then add new data
     myKoridor.get(slideNum-1).namaHalteGo.clear();
     for (int i=0; i<myKoridor.get(slideNum-1).totalHalteGo; i++)
-      myKoridor.get(slideNum-1).namaHalteGo.append(inputHalteGo[i].getText());
+      myKoridor.get(slideNum-1).namaHalteGo.add(inputHalteGo[i].getText());
   } else if (myKoridor.get(slideNum-1).namaHalteGo.size() > myKoridor.get(slideNum-1).totalHalteGo) {
     //remove data then add new data
     myKoridor.get(slideNum-1).namaHalteGo.clear();
     for (int i=0; i<myKoridor.get(slideNum-1).totalHalteGo; i++)
-      myKoridor.get(slideNum-1).namaHalteGo.append(inputHalteGo[i].getText());
+      myKoridor.get(slideNum-1).namaHalteGo.add(inputHalteGo[i].getText());
   }
 
   printArray(myKoridor.get(slideNum-1).namaHalteGo);
@@ -383,12 +408,12 @@ public void saveCurrentHalte() {
     //remove data then add new data
     myKoridor.get(slideNum-1).namaHalteBack.clear();
     for (int i=0; i<myKoridor.get(slideNum-1).totalHalteBack; i++)
-      myKoridor.get(slideNum-1).namaHalteBack.append(inputHalteBack[i].getText());
+      myKoridor.get(slideNum-1).namaHalteBack.add(inputHalteBack[i].getText());
   } else if (myKoridor.get(slideNum-1).namaHalteBack.size() > myKoridor.get(slideNum-1).totalHalteBack) {
     //remove data then add new data
     myKoridor.get(slideNum-1).namaHalteBack.clear();
     for (int i=0; i<myKoridor.get(slideNum-1).totalHalteBack; i++)
-      myKoridor.get(slideNum-1).namaHalteBack.append(inputHalteBack[i].getText());
+      myKoridor.get(slideNum-1).namaHalteBack.add(inputHalteBack[i].getText());
   }
   printArray(myKoridor.get(slideNum-1).namaHalteBack);
   newHalteWindow.close();
@@ -610,7 +635,7 @@ void loadSettingWizardLoaded(File selection) {
                 String[] newlist = split(list[j], ",");
                 for (int k=0; k<newlist.length; k++) {
                   if (myKoridor.get(korCount).namaHalteGo.size() < newlist.length)
-                    myKoridor.get(korCount).namaHalteGo.append(trim(newlist[k]));
+                    myKoridor.get(korCount).namaHalteGo.add(trim(newlist[k]));
                   else if (myKoridor.get(korCount).namaHalteGo.size() >= newlist.length)
                     myKoridor.get(korCount).namaHalteGo.set(k, trim(newlist[k]));
                 }
@@ -620,7 +645,7 @@ void loadSettingWizardLoaded(File selection) {
                 String[] newlist = split(list[j], ",");
                 for (int k=0; k<newlist.length; k++) {
                   if (myKoridor.get(korCount).namaHalteBack.size() < newlist.length)
-                    myKoridor.get(korCount).namaHalteBack.append(trim(newlist[k]));
+                    myKoridor.get(korCount).namaHalteBack.add(trim(newlist[k]));
                   else if (myKoridor.get(korCount).namaHalteBack.size() >= newlist.length)
                     myKoridor.get(korCount).namaHalteBack.set(k, trim(newlist[k]));
                 }
@@ -665,7 +690,7 @@ void loadSettingWizardLoaded(File selection) {
         labelMe[i] = new GLabel(loadSettingWizardWindow, 10, 10 +(i*50), 200, 20);
         labelMe[i].setOpaque(false);
         labelMe[i].setTextAlign(GAlign.LEFT, GAlign.MIDDLE);
-        labelMe[i].setText("Koridor " +i);
+        labelMe[i].setText("Koridor " +(i+1));
 
         me[i] = new GTextField(loadSettingWizardWindow, 10, 30 +(i*50), 200, 20);
         me[i].setOpaque(true);
@@ -696,31 +721,32 @@ void loadSettingWizardLoaded(File selection) {
       buttonAddLoadSettingWizard.setOpaque(false);
       buttonAddLoadSettingWizard.setText("add new koridor");
       buttonAddLoadSettingWizard.addEventHandler(this, "buttonAddLoadSettingWizardHandler");
-      
+
       GButton buttonIndoorLoadSettingWizard = new GButton(loadSettingWizardWindow, loadSettingWizardWindow.width-120, loadSettingWizardWindow.height-160, 100, 35);
       buttonIndoorLoadSettingWizard.setOpaque(false);
       buttonIndoorLoadSettingWizard.setText("edit text outdoor");
-      buttonIndoorLoadSettingWizard.addEventHandler(this, "buttonIndoorLoadSettingWizardHandler");
-      
+      buttonIndoorLoadSettingWizard.addEventHandler(this, "buttonOutdoorLoadSettingWizardHandler");
+
       GButton buttonOutdoorLoadSettingWizard = new GButton(loadSettingWizardWindow, loadSettingWizardWindow.width-120, loadSettingWizardWindow.height-210, 100, 35);
       buttonOutdoorLoadSettingWizard.setOpaque(false);
       buttonOutdoorLoadSettingWizard.setText("edit text indoor");
-      buttonOutdoorLoadSettingWizard.addEventHandler(this, "buttonOutdoorLoadSettingWizardHandler");
-      
+      buttonOutdoorLoadSettingWizard.addEventHandler(this, "buttonIndoorLoadSettingWizardHandler");
+
       loadSettingWizardWindow.loop();
     }
   }
 }
 void refreshLoadWizard() {
+  loadSettingWizardWindow.noLoop();
   me = new GTextField[korNum];
   labelMe = new GLabel[korNum];
   butMe = new GButton[korNum]; 
   delMe = new GButton[korNum];
-  for (int i=0; i<me.length; i++) {
+  for (int i=0; i<korNum; i++) {
     labelMe[i] = new GLabel(loadSettingWizardWindow, 10, 10 +(i*50), 200, 20);
     labelMe[i].setOpaque(false);
     labelMe[i].setTextAlign(GAlign.LEFT, GAlign.MIDDLE);
-    labelMe[i].setText("Koridor " +i);
+    labelMe[i].setText("Koridor " +(i+1));
 
     me[i] = new GTextField(loadSettingWizardWindow, 10, 30 +(i*50), 200, 20);
     me[i].setOpaque(true);
@@ -741,6 +767,7 @@ void refreshLoadWizard() {
 
     groupLoadSettingWizard.addControls(me[i], butMe[i], delMe[i], labelMe[i]);
   }
+  loadSettingWizardWindow.loop();
 }
 GWindow editHalteAndKoridorWindow;
 GPanel editHalteAndKoridorPanel;
@@ -785,6 +812,7 @@ public void editHalteAndKoridor(int i) {
       myLabelField[j].setOpaque(false);
       myLabelField[j].setTextAlign(GAlign.LEFT, GAlign.MIDDLE);
       myLabelField[j].setText("Halte "+(k+1) +" (jalur pergi) ");
+      //myLabelField[j].setLocalColorScheme(G4P.RED_SCHEME);
 
       myField[j] = new GTextField(editHalteAndKoridorWindow, 10, 30+(j*space), field, 20);
       myField[j].setOpaque(true);
@@ -807,6 +835,7 @@ public void editHalteAndKoridor(int i) {
       myLabelField[j].setOpaque(false);
       myLabelField[j].setTextAlign(GAlign.LEFT, GAlign.MIDDLE);
       myLabelField[j].setText("Halte "+(k+1) +" (jalur pulang) ");
+      //myLabelField[j].setLocalColorScheme(G4P.BLUE_SCHEME);
 
       delMyField[j] = new GButton(editHalteAndKoridorWindow, myField[j].getX()+myField[j].getWidth()+20, myField[j].getY(), 60, 20);
       delMyField[j].setOpaque(false);
@@ -816,19 +845,47 @@ public void editHalteAndKoridor(int i) {
       editHalteAndKoridorPanel.addControls(myField[j], myLabelField[j], delMyField[j]);
     }
   }
-  GButton myButton = new GButton(editHalteAndKoridorWindow, editHalteAndKoridorWindow.width-120, editHalteAndKoridorWindow.height-60, 100, 35);
-  myButton.setOpaque(false);
-  myButton.setText("save");
-  myButton.addEventHandler(this, "myButtonHandler");
+  //GButton myButton = new GButton(editHalteAndKoridorWindow, editHalteAndKoridorWindow.width-120, editHalteAndKoridorWindow.height-60, 100, 35);
+  //myButton.setOpaque(false);
+  //myButton.setText("save");
+  //myButton.addEventHandler(this, "myButtonHandler");
 
-  GButton addMyButton = new GButton(editHalteAndKoridorWindow, editHalteAndKoridorWindow.width-120, editHalteAndKoridorWindow.height-110, 100, 35);
+  GButton addMyButton = new GButton(editHalteAndKoridorWindow, editHalteAndKoridorWindow.width-120, 20, 100, 35);
   addMyButton.setOpaque(false);
   addMyButton.setText("add new halte");
   addMyButton.addEventHandler(this, "addMyButtonHandler");
 
   editHalteAndKoridorWindow.loop();
 }
+void resetEditHalteAndKoridor(GButton source) {
+  int totalHalteGo = myKoridor.get(currentHal).totalHalteGo;
+  int totalHalteBack = myKoridor.get(currentHal).totalHalteBack;
+  int total = totalHalteGo+totalHalteBack+1;
+  for (int j=0; j<total; j++) {
+    if (j > 0 && j<=totalHalteGo) {
+      int k = j - 1;
+      myField[j].dispose();
+      myLabelField[j].dispose();
+      delMyField[j].dispose();
+      if (source.tagNo == j) {
+        myKoridor.get(currentHal).namaHalteGo.remove(k);
+        myKoridor.get(currentHal).totalHalteGo --;
+      }
+    } else if (j > totalHalteGo) {
+      int k = j - (totalHalteGo+1);
+      myField[j].dispose();
+      myLabelField[j].dispose();
+      delMyField[j].dispose();
+      if (source.tagNo == j) {
+        myKoridor.get(currentHal).namaHalteBack.remove(k);
+        myKoridor.get(currentHal).totalHalteBack --;
+      }
+    }
+  } 
+  refreshEditHalteAndKoridor();
+}
 void refreshEditHalteAndKoridor() {
+  editHalteAndKoridorWindow.noLoop();
   int i = currentHal;
   int totalHalteGo = myKoridor.get(i).totalHalteGo;
   int totalHalteBack = myKoridor.get(i).totalHalteBack;
@@ -838,6 +895,7 @@ void refreshEditHalteAndKoridor() {
   delMyField = new GButton[total];
   int space = 50; 
   int field = 250;
+  println(total);
   for (int j=0; j<total; j++) {
     if (j > 0 && j<=totalHalteGo) {
       int k = j - 1;
@@ -855,8 +913,7 @@ void refreshEditHalteAndKoridor() {
       delMyField[j].setText("delete");
       delMyField[j].addEventHandler(this, "delMyFieldHandler");
       delMyField[j].tagNo = j;
-
-      editHalteAndKoridorPanel.addControls(myField[j], myLabelField[j], delMyField[j]);
+      editHalteAndKoridorPanel. addControls(myField[j], myLabelField[j], delMyField[j]);
     } else if (j > totalHalteGo) {
       int k = j - (totalHalteGo+1);
       myField[j] = new GTextField(editHalteAndKoridorWindow, 10, 30+(j*space), field, 20);
@@ -876,6 +933,7 @@ void refreshEditHalteAndKoridor() {
       editHalteAndKoridorPanel.addControls(myField[j], myLabelField[j], delMyField[j]);
     }
   }
+  editHalteAndKoridorWindow.loop();
 }
 public void saveTemporary() {
   int totalHalteGo = myKoridor.get(currentHal).totalHalteGo;
@@ -895,4 +953,138 @@ public void saveTemporary() {
   JOptionPane.showMessageDialog(null, "saved success ", "alert", JOptionPane.WARNING_MESSAGE);
   editHalteAndKoridorWindow.close();
   editHalteAndKoridorWindow = null;
+}
+GWindow addNewHalteWindow;
+GDropList dropHalte; 
+GTextField fieldIndexHalte, fieldNamaHalte;
+public void createAddNewHalteWindow() {
+  addNewHalteWindow = GWindow.getWindow(this, "Add new halte", 500, 350, 500, 130, JAVA2D);
+  addNewHalteWindow.noLoop();
+  addNewHalteWindow.setActionOnClose(G4P.CLOSE_WINDOW);
+  addNewHalteWindow.addDrawHandler(this, "addNewHalteWindowHandler");
+
+  GLabel labelIndexHalte = new GLabel(addNewHalteWindow, 10, 20, 100, 20);
+  labelIndexHalte.setOpaque(false);
+  labelIndexHalte.setTextAlign(GAlign.LEFT, GAlign.MIDDLE);
+  labelIndexHalte.setText("Index halte");
+
+  fieldIndexHalte = new GTextField(addNewHalteWindow, 10, labelIndexHalte.getY()+20, 200, 20);
+
+  dropHalte = new GDropList(addNewHalteWindow, fieldIndexHalte.getX()+fieldIndexHalte.getWidth()+20, 10, 120, 60, 2);
+  ArrayList<String> items = new ArrayList<String>();
+  items.add("halte (jalur pergi)"); 
+  items.add("halte (jalur pulang)");
+  dropHalte.setItems(items, 0);
+  dropHalte.setOpaque(false);
+
+  GLabel labelNamaHalte = new GLabel(addNewHalteWindow, 10, fieldIndexHalte.getY()+30, 100, 20);
+  labelNamaHalte.setOpaque(false);
+  labelNamaHalte.setTextAlign(GAlign.LEFT, GAlign.MIDDLE);
+  labelNamaHalte.setText("Nama halte");
+
+  fieldNamaHalte = new GTextField(addNewHalteWindow, 10, labelNamaHalte.getY()+20, 200, 20);
+
+  GButton buttonCreateHalte = new GButton(addNewHalteWindow, addNewHalteWindow.width-120, addNewHalteWindow.height-60, 100, 35);
+  buttonCreateHalte.setOpaque(false);
+  buttonCreateHalte.setText("create");
+  buttonCreateHalte.addEventHandler(this, "buttonCreateHalteHandler");
+
+  addNewHalteWindow.loop();
+}
+GWindow addNewKoridorWindow;
+GTextField fieldIndexKoridor, fieldNamaKoridor;
+public void createAddNewKoridorWindow() {
+  addNewKoridorWindow = GWindow.getWindow(this, "Add new koridor", 500, 100, 400, 130, JAVA2D);
+  addNewKoridorWindow.noLoop();
+  addNewKoridorWindow.setActionOnClose(G4P.CLOSE_WINDOW);
+  addNewKoridorWindow.addDrawHandler(this, "addNewKoridorWindowHandler");
+
+  GLabel labelIndexKoridor = new GLabel(addNewKoridorWindow, 10, 10, 100, 20);
+  labelIndexKoridor.setOpaque(false);
+  labelIndexKoridor.setTextAlign(GAlign.LEFT, GAlign.MIDDLE);
+  labelIndexKoridor.setText("Index koridor");
+
+  fieldIndexKoridor = new GTextField(addNewKoridorWindow, 10, labelIndexKoridor.getY()+20, 200, 20);
+
+  GLabel labelNamaKoridor = new GLabel(addNewKoridorWindow, 10, fieldIndexKoridor.getY()+30, 100, 20);
+  labelNamaKoridor.setOpaque(false);
+  labelNamaKoridor.setTextAlign(GAlign.LEFT, GAlign.MIDDLE);
+  labelNamaKoridor.setText("Nama koridor");
+
+  fieldNamaKoridor = new GTextField(addNewKoridorWindow, 10, labelNamaKoridor.getY()+20, 200, 20);
+
+  GButton buttonCreateKoridor = new GButton(addNewKoridorWindow, addNewKoridorWindow.width-120, 70, 100, 35);
+  buttonCreateKoridor.setOpaque(false);
+  buttonCreateKoridor.setText("create");
+  buttonCreateKoridor.addEventHandler(this, "buttonCreateKoridorHandler");
+
+  addNewKoridorWindow.loop();
+}
+GWindow editTextIndoorWindow;
+GTextField[] fieldEditTextIndoor;
+public void createEditTextIndoorWindow() {
+  editTextIndoorWindow = GWindow.getWindow(this, "Edit text indoor", 400, 140, 500, 280, JAVA2D);
+  editTextIndoorWindow.noLoop();
+  editTextIndoorWindow.setActionOnClose(G4P.CLOSE_WINDOW);
+  editTextIndoorWindow.addDrawHandler(this, "editTextIndoorWindowHandler");
+
+  GLabel[] labelEditTextIndoor = new GLabel[5];
+  fieldEditTextIndoor = new GTextField[5];
+
+  for (int i=0; i<5; i++) {
+    labelEditTextIndoor[i] =  new GLabel(editTextIndoorWindow, 10, 10+(i*50), 100, 20);
+    labelEditTextIndoor[i].setOpaque(false);
+    labelEditTextIndoor[i].setTextAlign(GAlign.LEFT, GAlign.MIDDLE);
+    labelEditTextIndoor[i].setText("Text indoor " +(i+1));
+    fieldEditTextIndoor[i] = new GTextField(editTextIndoorWindow, 10, labelEditTextIndoor[i].getY()+20, 300, 20);
+  }
+  for (int i=0; i<textIndoor.size(); i++) {
+    fieldEditTextIndoor[i].setText(textIndoor.get(i));
+  }
+  GButton buttonSaveTextIndoor = new GButton(editTextIndoorWindow, editTextIndoorWindow.width-120, editTextIndoorWindow.height-60, 100, 35);
+  buttonSaveTextIndoor.setOpaque(false);
+  buttonSaveTextIndoor.setText("save");
+  buttonSaveTextIndoor.addEventHandler(this, "buttonSaveTextIndoorHandler");
+
+  editTextIndoorWindow.loop();
+}
+GWindow editTextOutdoorWindow;
+GTextField[] fieldEditTextOutdoor;
+public void createEditTextOutdoorWindow() {
+  editTextOutdoorWindow = GWindow.getWindow(this, "Edit text outdoor", 400, 140, 500, 280, JAVA2D);
+  editTextOutdoorWindow.noLoop();
+  editTextOutdoorWindow.setActionOnClose(G4P.CLOSE_WINDOW);
+  editTextOutdoorWindow.addDrawHandler(this, "editTextOutdoorWindowHandler");
+
+  GLabel[] labelEditTextOutdoor = new GLabel[5];
+  fieldEditTextOutdoor = new GTextField[5];
+
+  for (int i=0; i<5; i++) {
+    labelEditTextOutdoor[i] =  new GLabel(editTextOutdoorWindow, 10, 10+(i*50), 100, 20);
+    labelEditTextOutdoor[i].setOpaque(false);
+    labelEditTextOutdoor[i].setTextAlign(GAlign.LEFT, GAlign.MIDDLE);
+    labelEditTextOutdoor[i].setText("Text outdoor " +(i+1));
+    fieldEditTextOutdoor[i] = new GTextField(editTextOutdoorWindow, 10, labelEditTextOutdoor[i].getY()+20, 300, 20);
+  }
+  for (int i=0; i<textOutdoor.size(); i++) {
+    fieldEditTextOutdoor[i].setText(textOutdoor.get(i));
+  }
+  GButton buttonSaveTextOutdoor = new GButton(editTextOutdoorWindow, editTextOutdoorWindow.width-120, editTextOutdoorWindow.height-60, 100, 35);
+  buttonSaveTextOutdoor.setOpaque(false);
+  buttonSaveTextOutdoor.setText("save");
+  buttonSaveTextOutdoor.addEventHandler(this, "buttonSaveTextOutdoorHandler");
+
+  editTextOutdoorWindow.loop();
+}
+boolean numberOrNot(String input)
+{
+  try
+  {
+    Integer.parseInt(input);
+  }
+  catch(NumberFormatException ex)
+  {
+    return false;
+  }
+  return true;
 }
