@@ -50,17 +50,65 @@ void loadSettingLoaded(File selection) {
   }
 }
 public void buttonWriteTextHandler(GButton source, GEvent event) {
-  if (!loadSettingPath.isEmpty()) {
-    String lines[] = loadStrings(loadSettingPath);
-    println(lines.length);
-    for (int i = 0; i < lines.length; i++) {
-      println(lines[i]);
-      String[] list = split(lines[i], ":");
-      printArray(list);
-      //for (int j=0; j<list.length; j++) {
-      //  String[] koridorFiles = loadStrings(path +"\\" +list[j]);
-      //  loadFilesToArea(koridorFiles, j, i);
-      //}
+  selectFolder("Select a file to process:", "writeToSDCard");
+}
+void writeToSDCard(File selection) {
+  if (selection == null) {
+    println("Window was closed or the user hit cancel.");
+  } else {
+    if (!loadSettingPath.isEmpty()) {
+      String lines[] = loadStrings(loadSettingPath);
+      println(lines.length);
+      for (int i = 0; i < lines.length; i++) {
+        println(lines[i]);
+        String[] list = split(lines[i], ":");
+        printArray(list);
+
+        for (int j=0; j<list.length; j++) {
+          list[j] = trim(list[j]);
+          if (i == 0 && j == 1) {
+            korNum = int(list[j]);
+          } else if (i == 1 && j == 1) {
+            String[] newlist = split(list[j], ",");
+            saveStrings(selection +"/listKoridor.txt", newlist);
+          } else if (i == lines.length-2 && j == 1) {
+            String[] newlist = split(list[j], ",");
+            //textindoor
+          } else if (i == lines.length-1 && j == 1) {
+            String[] newlist = split(list[j], ",");
+            //textoutdoor
+          } else {
+            if ( i % 2 == 0 && j == 1) {
+              //total halte
+            } else if ( i % 2 != 0 && j == 1) {
+              //if (!change) {
+              //  String[] newlist = split(list[j], ",");
+              //  for (int k=0; k<newlist.length; k++) {
+              //    if (myKoridor.get(korCount).namaHalteGo.size() < newlist.length)
+              //      myKoridor.get(korCount).namaHalteGo.add(trim(newlist[k]));
+              //    else if (myKoridor.get(korCount).namaHalteGo.size() >= newlist.length)
+              //      myKoridor.get(korCount).namaHalteGo.set(k, trim(newlist[k]));
+              //  }
+              //  //printArray(myKoridor[korCount].namaHalteGo);
+              //  change = true;
+              //} else if (change) {
+              //  String[] newlist = split(list[j], ",");
+              //  for (int k=0; k<newlist.length; k++) {
+              //    if (myKoridor.get(korCount).namaHalteBack.size() < newlist.length)
+              //      myKoridor.get(korCount).namaHalteBack.add(trim(newlist[k]));
+              //    else if (myKoridor.get(korCount).namaHalteBack.size() >= newlist.length)
+              //      myKoridor.get(korCount).namaHalteBack.set(k, trim(newlist[k]));
+              //  }
+              //  //printArray(myKoridor[korCount].namaHalteBack);
+              //  change = false;
+              //  korCount ++;
+              //}
+
+              //list halte go and back
+            }
+          }
+        }
+      }
     }
   }
   newWriteToSDWindow.close();

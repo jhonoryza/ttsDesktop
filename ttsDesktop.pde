@@ -116,7 +116,7 @@ synchronized public void newWriteToSDWindowHandler(PApplet appc, GWinData data) 
   //text
   appc.fill(0);
   textFont(ubu11);
-  appc.text("no setting load", 10, 20);
+  appc.text("load setting : " +loadSettingPath, 10, 20);
 }
 
 synchronized public void win_drawVoiceSetting(PApplet appc, GWinData data) {
