@@ -46,11 +46,11 @@ public void draw() {
 // Use this method to add additional statements
 // to customise the GUI controls
 public void customGUI() {
-  buttonNew.setFont(GuiUbu11);
-  buttonLoad.setFont(GuiUbu11);
-  buttonVoice.setFont(GuiUbu11);
-  buttonSD.setFont(GuiUbu11);
-  buttonExit.setFont(GuiUbu11);
+  //buttonNew.setFont(GuiUbu11);
+  //buttonLoad.setFont(GuiUbu11);
+  //buttonVoice.setFont(GuiUbu11);
+  //buttonSD.setFont(GuiUbu11);
+  //buttonExit.setFont(GuiUbu11);
   GButton.useRoundCorners(false);
   mainGroup = new GGroup(this);
   mainGroup.addControls(buttonNew, buttonLoad, buttonVoice, buttonSD, buttonExit);

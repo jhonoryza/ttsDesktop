@@ -40,7 +40,7 @@ public void saveHalteHandler(GButton source, GEvent event) {
   saveCurrentHalte();
 }
 public void buttonLoadSettingHandler(GButton source, GEvent event) {
-  selectInput("Select a file to process:", "loadSettingLoaded");
+  selectInput("Select a load setting file", "loadSettingLoaded");
 }
 void loadSettingLoaded(File selection) {
   if (selection == null) {
@@ -50,9 +50,12 @@ void loadSettingLoaded(File selection) {
   }
 }
 public void buttonWriteTextHandler(GButton source, GEvent event) {
-  selectFolder("Select a file to process:", "writeToSDCard");
+  selectFolder("select sd card", "writeToSDCard");
 }
 void writeToSDCard(File selection) {
+  boolean change = false;
+  int fcount=0, ncount=0;
+
   if (selection == null) {
     println("Window was closed or the user hit cancel.");
   } else {
@@ -70,45 +73,38 @@ void writeToSDCard(File selection) {
             korNum = int(list[j]);
           } else if (i == 1 && j == 1) {
             String[] newlist = split(list[j], ",");
-            saveStrings(selection +"/listKoridor.txt", newlist);
+            //list koridor
+            saveStrings(selection +"/listkoridor.txt", newlist);
           } else if (i == lines.length-2 && j == 1) {
             String[] newlist = split(list[j], ",");
             //textindoor
+            saveStrings(selection +"/textindoor.txt", newlist);
           } else if (i == lines.length-1 && j == 1) {
             String[] newlist = split(list[j], ",");
             //textoutdoor
+            saveStrings(selection +"/textoutdoor.txt", newlist);
           } else {
             if ( i % 2 == 0 && j == 1) {
               //total halte
             } else if ( i % 2 != 0 && j == 1) {
-              //if (!change) {
-              //  String[] newlist = split(list[j], ",");
-              //  for (int k=0; k<newlist.length; k++) {
-              //    if (myKoridor.get(korCount).namaHalteGo.size() < newlist.length)
-              //      myKoridor.get(korCount).namaHalteGo.add(trim(newlist[k]));
-              //    else if (myKoridor.get(korCount).namaHalteGo.size() >= newlist.length)
-              //      myKoridor.get(korCount).namaHalteGo.set(k, trim(newlist[k]));
-              //  }
-              //  //printArray(myKoridor[korCount].namaHalteGo);
-              //  change = true;
-              //} else if (change) {
-              //  String[] newlist = split(list[j], ",");
-              //  for (int k=0; k<newlist.length; k++) {
-              //    if (myKoridor.get(korCount).namaHalteBack.size() < newlist.length)
-              //      myKoridor.get(korCount).namaHalteBack.add(trim(newlist[k]));
-              //    else if (myKoridor.get(korCount).namaHalteBack.size() >= newlist.length)
-              //      myKoridor.get(korCount).namaHalteBack.set(k, trim(newlist[k]));
-              //  }
-              //  //printArray(myKoridor[korCount].namaHalteBack);
-              //  change = false;
-              //  korCount ++;
-              //}
-
-              //list halte go and back
+              if (!change) {
+                String[] newlist = split(list[j], ",");
+                saveStrings(selection +"/go" +fcount +".txt", newlist);
+                change = true;
+                fcount++;
+              } else if (change) {
+                String[] newlist = split(list[j], ",");
+                saveStrings(selection +"/back" +ncount +".txt", newlist);
+                change = false;
+                ncount++;
+              }
             }
           }
         }
       }
+      JOptionPane.showMessageDialog(null, "Save success", "Message", JOptionPane.WARNING_MESSAGE);
+    } else{
+     JOptionPane.showMessageDialog(null, "Load setting file first", "Error", JOptionPane.WARNING_MESSAGE); 
     }
   }
   newWriteToSDWindow.close();

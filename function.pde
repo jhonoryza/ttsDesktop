@@ -27,7 +27,7 @@ public void voiceSetting() {
   buttonSaveConfig.setText("save configuration");
   buttonSaveConfig.setOpaque(false);
   buttonSaveConfig.addEventHandler(this, "buttonSaveVoiceConfiguration");
-  buttonSaveConfig.setFont(GuiUbu11);
+  //buttonSaveConfig.setFont(GuiUbu11);
 
   voiceSettingWindow.loop();
 }
@@ -341,19 +341,19 @@ public void createWriteToSDWindow() {
   buttonLoadSetting.setText("load setting");
   buttonLoadSetting.setOpaque(false);
   buttonLoadSetting.addEventHandler(this, "buttonLoadSettingHandler");
-  buttonLoadSetting.setFont(GuiUbu11);
+  //buttonLoadSetting.setFont(GuiUbu11);
 
   buttonWriteText = new GButton(newWriteToSDWindow, 10, buttonLoadSetting.getY() + 40, 90, 30);
   buttonWriteText.setText("write text");
   buttonWriteText.setOpaque(false);
   buttonWriteText.addEventHandler(this, "buttonWriteTextHandler");
-  buttonWriteText.setFont(GuiUbu11);
+  //buttonWriteText.setFont(GuiUbu11);
 
   buttonWriteVoice = new GButton(newWriteToSDWindow, 10, buttonWriteText.getY() + 40, 90, 30);
   buttonWriteVoice.setText("write voice");
   buttonWriteVoice.setOpaque(false);
   buttonWriteVoice.addEventHandler(this, "buttonWriteVoiceHandler");
-  buttonWriteVoice.setFont(GuiUbu11);
+  //buttonWriteVoice.setFont(GuiUbu11);
 
   newWriteToSDWindow.loop();
 }
