@@ -47,6 +47,76 @@ void loadSettingLoaded(File selection) {
     println("Window was closed or the user hit cancel.");
   } else {
     loadSettingPath = selection.getAbsolutePath();
+    String lines[] = loadStrings(loadSettingPath);
+    println(lines.length);
+    boolean change = false; 
+    int korCount = 0; 
+    for (int i = 0; i < lines.length; i++) {
+      String[] list = split(lines[i], ":");
+      for (int j=0; j<list.length; j++) {
+        list[j] = trim(list[j]);
+        if (i == 0 && j == 1) {
+          korNum = int(list[j]);
+        } else if (i == 1 && j == 1) {
+          String[] newlist = split(list[j], ",");
+          //myKoridor = new koridor[newlist.length];
+          for (int k=0; k<newlist.length; k++) {
+            //myKoridor[k] = new koridor();
+            if (myKoridor.size() < korNum)
+              myKoridor.add(new koridor());
+            myKoridor.get(k).namaKoridor = trim(newlist[k]);
+          }
+        } else if (i == lines.length-2 && j == 1) {
+          String[] newlist = split(list[j], ",");
+          for (int k=0; k<newlist.length; k++) {
+            if (textIndoor.size() < newlist.length)
+              textIndoor.append(trim(newlist[k]));
+            else if (textIndoor.size() >= newlist.length)
+              textIndoor.set(k, trim(newlist[k]));
+          }
+        } else if (i == lines.length-1 && j == 1) {
+          String[] newlist = split(list[j], ",");
+          for (int k=0; k<newlist.length; k++) {
+            if (textOutdoor.size() < newlist.length)
+              textOutdoor.append(trim(newlist[k]));
+            else if (textOutdoor.size() >= newlist.length)
+              textOutdoor.set(k, trim(newlist[k]));
+          }
+        } else {
+          if ( i % 2 == 0 && j == 1) {
+            if (!change) {
+              myKoridor.get(korCount).totalHalteGo = int(list[j]);
+            } else if (change) {
+              myKoridor.get(korCount).totalHalteBack = int(list[j]);
+            }
+          } else if ( i % 2 != 0 && j == 1) {
+            if (!change) {
+              String[] newlist = split(list[j], ",");
+              for (int k=0; k<newlist.length; k++) {
+                if (myKoridor.get(korCount).namaHalteGo.size() < newlist.length)
+                  myKoridor.get(korCount).namaHalteGo.add(trim(newlist[k]));
+                else if (myKoridor.get(korCount).namaHalteGo.size() >= newlist.length)
+                  myKoridor.get(korCount).namaHalteGo.set(k, trim(newlist[k]));
+              }
+              //printArray(myKoridor[korCount].namaHalteGo);
+              change = true;
+            } else if (change) {
+              String[] newlist = split(list[j], ",");
+              for (int k=0; k<newlist.length; k++) {
+                if (myKoridor.get(korCount).namaHalteBack.size() < newlist.length)
+                  myKoridor.get(korCount).namaHalteBack.add(trim(newlist[k]));
+                else if (myKoridor.get(korCount).namaHalteBack.size() >= newlist.length)
+                  myKoridor.get(korCount).namaHalteBack.set(k, trim(newlist[k]));
+              }
+              //printArray(myKoridor[korCount].namaHalteBack);
+              change = false;
+              korCount ++;
+            }
+          }
+        }
+      }
+      //printArray(list);
+    }
   }
 }
 public void buttonWriteTextHandler(GButton source, GEvent event) {
@@ -103,14 +173,79 @@ void writeToSDCard(File selection) {
         }
       }
       JOptionPane.showMessageDialog(null, "Save success", "Message", JOptionPane.WARNING_MESSAGE);
-    } else{
-     JOptionPane.showMessageDialog(null, "Load setting file first", "Error", JOptionPane.WARNING_MESSAGE); 
+    } else {
+      JOptionPane.showMessageDialog(null, "Load setting file first", "Error", JOptionPane.WARNING_MESSAGE);
     }
   }
   newWriteToSDWindow.close();
   newWriteToSDWindow = null;
 }
 public void buttonWriteVoiceHandler(GButton source, GEvent event) {
+  selectFolder("select sd card", "writeVoiceToSDCard");
+}
+void writeVoiceToSDCard(File selection) {
+  //String textVoice = "";
+  //String pitch = voicePitch;
+  //String rate = voiceRate;
+  //String vol = voiceVolume;
+  //String u= "http://code.responsivevoice.org/getvoice.php?t=" 
+  //  +textVoice +"&tl=id&sv=&vn=&pitch=" +pitch +"&rate=" +rate +"&vol=" +vol;
+
+  if (selection == null) {
+    println("Window was closed or the user hit cancel.");
+    JOptionPane.showMessageDialog(null, "no selection", "Error", JOptionPane.WARNING_MESSAGE);
+  } else {
+    if (!loadSettingPath.isEmpty()) {
+      pleaseWaitWindow();
+      createMp3(selection);
+      please.close(); 
+      please = null;
+    } else {
+      JOptionPane.showMessageDialog(null, "Load setting file first", "Error", JOptionPane.WARNING_MESSAGE);
+    }
+  }
+}
+void createMp3(File selection) {
+  String textVoice = "";
+  String pitch = voicePitch;
+  String rate = voiceRate;
+  String vol = voiceVolume;
+  for (int i=0; i<korNum; i++) {
+    String text = myKoridor.get(i).namaKoridor;
+    textVoice = text.replace(" ", "%20");
+    String u= "http://code.responsivevoice.org/getvoice.php?t=" 
+      +textVoice +"&tl=id&sv=&vn=&pitch=" +pitch +"&rate=" +rate +"&vol=" +vol;
+    saveToFile(u, text, selection.toString());
+
+    for (int j=0; j<myKoridor.get(i).namaHalteGo.size(); j++) {
+      text = myKoridor.get(i).namaHalteGo.get(j);
+      textVoice = text.replace(" ", "%20");
+      u= "http://code.responsivevoice.org/getvoice.php?t=" 
+        +textVoice +"&tl=id&sv=&vn=&pitch=" +pitch +"&rate=" +rate +"&vol=" +vol;
+      saveToFile(u, text, selection.toString());
+    }
+    for (int j=0; j<myKoridor.get(i).namaHalteBack.size(); j++) {
+      text = myKoridor.get(i).namaHalteBack.get(j);
+      textVoice = text.replace(" ", "%20");
+      u= "http://code.responsivevoice.org/getvoice.php?t=" 
+        +textVoice +"&tl=id&sv=&vn=&pitch=" +pitch +"&rate=" +rate +"&vol=" +vol;
+      saveToFile(u, text, selection.toString());
+    }
+  }
+  for (int i=0; i<textIndoor.size(); i++) {
+    String text = textIndoor.get(i);
+    textVoice = text.replace(" ", "%20");
+    String u= "http://code.responsivevoice.org/getvoice.php?t=" 
+      +textVoice +"&tl=id&sv=&vn=&pitch=" +pitch +"&rate=" +rate +"&vol=" +vol;
+    saveToFile(u, text, selection.toString());
+  }
+  for (int i=0; i<textOutdoor.size(); i++) {
+    String text = textOutdoor.get(i);
+    textVoice = text.replace(" ", "%20");
+    String u= "http://code.responsivevoice.org/getvoice.php?t=" 
+      +textVoice +"&tl=id&sv=&vn=&pitch=" +pitch +"&rate=" +rate +"&vol=" +vol;
+    saveToFile(u, text, selection.toString());
+  }
 }
 boolean browsed = false;
 public void browseHandler(GButton source, GEvent event) {

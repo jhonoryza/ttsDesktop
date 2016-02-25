@@ -2,10 +2,15 @@
 import g4p_controls.*;
 import java.awt.Font;
 import javax.swing.JOptionPane;
+import java.net.*;
+import java.io.*;
+import gifAnimation.*;
+
 //public variable
 String voicePitch, voiceRate, voiceVolume, newSettingFilePath, loadSettingPath, loadSettingWizardPath;
 StringList textIndoor, textOutdoor;
 GGroup mainGroup;
+Gif loopingGif;
 public void setup() {
   newSettingFilePath = sketchPath() +"/data/my.cfg";
   loadSettingPath = ""; 
@@ -19,11 +24,14 @@ public void setup() {
   // Place your setup code here
   println(sketchPath());
   loadVoiceSetting();
+  frameRate(20);
+  loopingGif = new Gif(this, "data/a.gif");
+  loopingGif.loop();
 }
 public void draw() {
   background(240);
   noStroke();
-
+  image(loopingGif, width/2 - loopingGif.width/2, height / 2 - loopingGif.height / 2);
   //border bawah
   fill(255, 200);
   rect(0, height-20, width, 20);
@@ -190,6 +198,14 @@ synchronized public void editTextOutdoorWindowHandler(PApplet appc, GWinData dat
   //border
   appc.fill(255, 255, 255, 200);
   appc.rect(appc.width-140, 0, 160, appc.height);
+}
+synchronized public void pleaseWindowHandler(PApplet appc, GWinData data) {
+  appc.background(240);
+  appc.noStroke();
+  appc.fill(0);
+  textFont(ubu11);
+  appc.text("please wait", appc.width/2 - 30, 20);
+  appc.image(loadingGif, appc.width/2 - loadingGif.width/2, appc.height / 2 - loadingGif.height / 2);
 }
 public void GUINewSetSlideNum0() {
   if (buttonNext != null && buttonBack != null && buttonContinue != null && optYes != null && optNo != null && in1 != null && in2 != null && editHalte != null) {

@@ -1076,6 +1076,47 @@ public void createEditTextOutdoorWindow() {
 
   editTextOutdoorWindow.loop();
 }
+public void saveToFile(String u, String filename, String pathFileMp3) {
+  try {
+    URL url = new URL(u);
+    try {
+      URLConnection connection = url.openConnection();
+      // pose as webbrowser
+      connection.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.0.3705; .NET CLR 1.1.4322; .NET CLR 1.2.30703)");
+      connection.connect();
+      InputStream is = connection.getInputStream();
+      // create a file named after the text
+      File f;
+      f = new File(pathFileMp3 +"/" +filename +".mp3");
+      OutputStream out = new FileOutputStream(f);
+      byte buf[] = new byte[1024];
+      int len;
+      while ((len = is.read(buf)) > 0) {
+        out.write(buf, 0, len);
+        //print(buf);
+      }
+      out.close();
+      is.close();
+    } 
+    catch (IOException e) {
+      e.printStackTrace();
+    }
+  } 
+  catch (MalformedURLException e) {
+    e.printStackTrace();
+  }
+}
+GWindow please;
+Gif loadingGif;
+void pleaseWaitWindow(){
+  please = GWindow.getWindow(this, "Warn", 400, 350, 350, 250, JAVA2D);
+  please.noLoop();
+  please.setActionOnClose(G4P.CLOSE_WINDOW);
+  please.addDrawHandler(this, "pleaseWindowHandler");  
+  loadingGif = new Gif(this, "data/b.gif");
+  loadingGif.loop();
+  please.loop();
+}
 boolean numberOrNot(String input)
 {
   try
