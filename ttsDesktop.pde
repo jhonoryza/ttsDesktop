@@ -27,6 +27,7 @@ public void setup() {
   frameRate(20);
   loopingGif = new Gif(this, "data/a.gif");
   loopingGif.loop();
+  loadingGif = new Gif(this, "data/b.gif");
 }
 public void draw() {
   background(240);
@@ -120,11 +121,18 @@ synchronized public void newWriteToSDWindowHandler(PApplet appc, GWinData data) 
   //border
   appc.fill(255, 255, 255, 200);
   appc.rect(0, appc.height-20, appc.width, appc.height/6);
+  appc.rect(0, 0, appc.width, 20);
 
   //text
   appc.fill(0);
   textFont(ubu11);
-  appc.text("load setting : " +loadSettingPath, 10, 20);
+  appc.text("load setting : " +loadSettingPath, 10, appc.height-40);
+  //text
+  appc.fill(0);
+  appc.textFont(ubu12);
+  appc.text("Config Apps", appc.width/2-35, 15);
+  appc.textSize(10);
+  appc.text("copyright \u00a9 2016 GTI", appc.width/1.3, appc.height-5);
 }
 
 synchronized public void win_drawVoiceSetting(PApplet appc, GWinData data) {
@@ -199,13 +207,17 @@ synchronized public void editTextOutdoorWindowHandler(PApplet appc, GWinData dat
   appc.fill(255, 255, 255, 200);
   appc.rect(appc.width-140, 0, 160, appc.height);
 }
+color c = color(255, 255, lerpColor(0, 255, .33));
 synchronized public void pleaseWindowHandler(PApplet appc, GWinData data) {
-  appc.background(240);
+  //if(frameCount % 10 ==0)
+  //c = color(255, 255, lerpColor(0, 255, .33));
+  appc.background(255);
   appc.noStroke();
-  appc.fill(0);
-  textFont(ubu11);
-  appc.text("please wait", appc.width/2 - 30, 20);
+  appc.tint(c, 150);
   appc.image(loadingGif, appc.width/2 - loadingGif.width/2, appc.height / 2 - loadingGif.height / 2);
+  //appc.fill(0);
+  //textFont(ubu11);
+  //appc.text("please wait", appc.width/2 - 30, 20);
 }
 public void GUINewSetSlideNum0() {
   if (buttonNext != null && buttonBack != null && buttonContinue != null && optYes != null && optNo != null && in1 != null && in2 != null && editHalte != null) {

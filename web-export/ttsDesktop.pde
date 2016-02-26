@@ -1,3 +1,312 @@
+// Need G4P library
+import g4p_controls.*;
+import java.awt.Font;
+import javax.swing.JOptionPane;
+import java.net.*;
+import java.io.*;
+import gifAnimation.*;
+
+//public variable
+String voicePitch, voiceRate, voiceVolume, newSettingFilePath, loadSettingPath, loadSettingWizardPath;
+StringList textIndoor, textOutdoor;
+GGroup mainGroup;
+Gif loopingGif;
+public void setup() {
+  newSettingFilePath = sketchPath() +"/data/my.cfg";
+  loadSettingPath = ""; 
+  loadSettingWizardPath = "";
+  textIndoor = new StringList();
+  textOutdoor = new StringList();
+  loadCurrentFont();
+  size(350, 190, JAVA2D);
+  createGUI();
+  customGUI();
+  // Place your setup code here
+  println(sketchPath());
+  loadVoiceSetting();
+  frameRate(20);
+  loopingGif = new Gif(this, "data/a.gif");
+  loopingGif.loop();
+}
+public void draw() {
+  background(240);
+  noStroke();
+  image(loopingGif, width/2 - loopingGif.width/2, height / 2 - loopingGif.height / 2);
+  //border bawah
+  fill(255, 200);
+  rect(0, height-20, width, 20);
+  rect(0, 0, width, 20);
+
+  //text
+  fill(0);
+  textFont(ubu12);
+  text("Config Apps", width/2-35, 15);
+  textSize(10);
+  text("copyright \u00a9 2016 GTI", width/1.5, height-5);
+
+  if ((loadSettingWizardWindow != null && loadSettingWizardWindow.isVisible()) || (voiceSettingWindow != null && voiceSettingWindow.isVisible()) 
+    || (newSettingWindow != null && newSettingWindow.isVisible()) || (newWriteToSDWindow != null && newWriteToSDWindow.isVisible()) )
+    mainGroup.setEnabled(false);
+  else
+    mainGroup.setEnabled(true);
+}
+
+// Use this method to add additional statements
+// to customise the GUI controls
+public void customGUI() {
+  //buttonNew.setFont(GuiUbu11);
+  //buttonLoad.setFont(GuiUbu11);
+  //buttonVoice.setFont(GuiUbu11);
+  //buttonSD.setFont(GuiUbu11);
+  //buttonExit.setFont(GuiUbu11);
+  GButton.useRoundCorners(false);
+  mainGroup = new GGroup(this);
+  mainGroup.addControls(buttonNew, buttonLoad, buttonVoice, buttonSD, buttonExit);
+}
+
+//handler window
+int korNum = 0, slideNum = 0, newSetSlideNum = 0;
+//koridor[] myKoridor;
+ArrayList<koridor> myKoridor = new ArrayList<koridor>();
+synchronized public void win_drawNewSetting(PApplet appc, GWinData data) {
+  appc.background(240);
+  appc.noStroke();
+
+  //border
+  appc.fill(255, 255, 255, 200);
+  appc.rect(0, 0, appc.width, appc.height/7);
+  appc.rect(0, appc.height-appc.height/7, appc.width, appc.height/7);
+
+  //text
+  appc.fill(0);
+  appc.textFont(ubu14);
+  appc.text("Welcome to the new setting wizard", 20, 30);
+  appc.textSize(11);
+
+  if (newSetSlideNum == 0) {
+    appc.text("Input total koridor :", 10, 60);
+  } else if (newSetSlideNum == 1) {
+    appc.text("Input nama koridor " +slideNum, 10, 60);
+    appc.text("Total halte (jalur pergi) == Total halte (jalur pulang) ?", 10, 110);
+    if (muncul) {
+      appc.text("input total halte (jalur pergi)", 10, 130);
+      appc.text("input total halte (jalur pulang)", 10, 180);
+    } else
+      appc.text("input total halte (jalur pergi) dan (jalur pulang)", 10, 130);
+  } else if (newSetSlideNum == 2) {
+    appc.text("Input text indoor ", 10, 60);
+  } else if (newSetSlideNum == 3) {
+    appc.text("Input text outdoor ", 10, 60);
+    if (browsed)
+      appc.text("save path: " +newSettingFilePath, 10, newSettingWindow.height-50);
+    else if (!browsed)
+      appc.text("save path: " +newSettingFilePath, 10, newSettingWindow.height-50);
+  }
+}
+
+synchronized public void newHalteWindowHandler(PApplet appc, GWinData data) {
+  appc.background(240);
+  appc.noStroke();
+
+  //border
+  appc.fill(255, 255, 255, 200);
+  appc.rect(appc.width - 120, 0, appc.width - (appc.width - 120), appc.height);
+}
+
+synchronized public void newWriteToSDWindowHandler(PApplet appc, GWinData data) {
+  appc.background(240);
+  appc.noStroke();
+
+  //border
+  appc.fill(255, 255, 255, 200);
+  appc.rect(0, appc.height-20, appc.width, appc.height/6);
+
+  //text
+  appc.fill(0);
+  textFont(ubu11);
+  appc.text("load setting : " +loadSettingPath, 10, 20);
+}
+
+synchronized public void win_drawVoiceSetting(PApplet appc, GWinData data) {
+  appc.background(240);
+  appc.noStroke();
+
+  //border
+  appc.fill(255, 255, 255, 200);
+  appc.rect(0, appc.height-20, appc.width, appc.height/6);
+
+  //text
+  appc.fill(0);
+  textFont(ubu11);
+  appc.text("Pitch (0 - 1) :", inputPitch.getX()-80, inputPitch.getY()+15);
+  appc.text("Pitch (0 - 1) :", inputRate.getX()-80, inputPitch.getY()+15);
+  appc.text("Pitch (0 - 1) :", inputVolume.getX()-80, inputPitch.getY()+15);
+  appc.textSize(10);
+  appc.text(sketchPath() +"/data/voice.cfg", 0, appc.height-7);
+}
+synchronized public void loadSettingWizardHandler(PApplet appc, GWinData data) {
+  appc.background(240);
+  appc.noStroke();
+
+  //border
+  appc.fill(255, 255, 255, 200);
+  appc.rect(appc.width-140, 0, 160, appc.height);
+
+  //text
+  //appc.fill(0);
+  //textFont(ubu11);
+  //appc.text(" save current \nconfiguration", appc.width-110, appc.height-90);
+  //appc.text(" add new \n  koridor", appc.width-100, appc.height-270);
+  //appc.text("     save as", appc.width-110, appc.height-160);
+}
+synchronized public void editHalteAndKoridorWindowHandler(PApplet appc, GWinData data) {
+  appc.background(240);
+  appc.noStroke();
+
+  //border
+  appc.fill(255, 255, 255, 200);
+  appc.rect(appc.width-140, 0, 160, appc.height);
+}
+synchronized public void addNewHalteWindowHandler(PApplet appc, GWinData data) {
+  appc.background(240);
+  appc.noStroke();
+
+  //border
+  appc.fill(255, 255, 255, 200);
+  appc.rect(appc.width-140, 0, 160, appc.height);
+}
+synchronized public void addNewKoridorWindowHandler(PApplet appc, GWinData data) {
+  appc.background(240);
+  appc.noStroke();
+
+  //border
+  appc.fill(255, 255, 255, 200);
+  appc.rect(appc.width-140, 0, 160, appc.height);
+}
+synchronized public void editTextIndoorWindowHandler(PApplet appc, GWinData data) {
+  appc.background(240);
+  appc.noStroke();
+
+  //border
+  appc.fill(255, 255, 255, 200);
+  appc.rect(appc.width-140, 0, 160, appc.height);
+}
+synchronized public void editTextOutdoorWindowHandler(PApplet appc, GWinData data) {
+  appc.background(240);
+  appc.noStroke();
+
+  //border
+  appc.fill(255, 255, 255, 200);
+  appc.rect(appc.width-140, 0, 160, appc.height);
+}
+synchronized public void pleaseWindowHandler(PApplet appc, GWinData data) {
+  appc.background(240);
+  appc.noStroke();
+  appc.fill(0);
+  textFont(ubu11);
+  appc.text("please wait", appc.width/2 - 30, 20);
+  appc.image(loadingGif, appc.width/2 - loadingGif.width/2, appc.height / 2 - loadingGif.height / 2);
+}
+public void GUINewSetSlideNum0() {
+  if (buttonNext != null && buttonBack != null && buttonContinue != null && optYes != null && optNo != null && in1 != null && in2 != null && editHalte != null) {
+    buttonNext.setVisible(false);
+    buttonBack.setVisible(false);
+    buttonContinue.setVisible(true);
+    optYes.setVisible(false);
+    optNo.setVisible(false);
+    in1.setVisible(false);
+    in2.setVisible(false);
+    editHalte.setVisible(false);
+    for (int i=0; i<5; i++)
+      inB[i].setVisible(false);
+    buttonBrowse.setVisible(false);
+  }
+}
+boolean muncul = false;
+public void GUINewSetSlideNum1() {
+  if (buttonNext != null && buttonBack != null && buttonContinue != null && optYes != null && optNo != null && in1 != null && in2 != null && editHalte != null) {
+    buttonNext.setVisible(true);
+    buttonBack.setVisible(true);
+    buttonContinue.setVisible(false);
+    optYes.setVisible(true);
+    optNo.setVisible(true);
+    if (in2.isVisible())
+      muncul = true;
+    else if (!in2.isVisible())
+      muncul = false;
+    for (int i=0; i<5; i++)
+      inB[i].setVisible(false);
+    buttonBrowse.setVisible(false);
+  }
+}
+public void GUINewSetSlideNum2() {
+  if (buttonNext != null && buttonBack != null && buttonContinue != null && optYes != null && optNo != null && in1 != null && in2 != null && editHalte != null) {
+    buttonNext.setVisible(true);
+    buttonBack.setVisible(true);
+    buttonContinue.setVisible(false);
+    optYes.setVisible(false);
+    optNo.setVisible(false);
+    in1.setVisible(false);
+    editHalte.setVisible(false);
+    for (int i=0; i<5; i++) {
+      inB[i].setVisible(true);
+      if (i==0)
+        inB[i].setPromptText("input text indoor " +i);
+      if (i>0)
+        inB[i].setPromptText("input text indoor "+i +" (optional)");
+    }
+    buttonBrowse.setVisible(false);
+  }
+}
+public void GUINewSetSlideNum3() {
+  if (buttonNext != null && buttonBack != null && buttonContinue != null && optYes != null && optNo != null && in1 != null && in2 != null && editHalte != null) {
+    buttonNext.setVisible(true);
+    buttonBack.setVisible(true);
+    buttonContinue.setVisible(false);
+    optYes.setVisible(false);
+    optNo.setVisible(false);
+    in1.setVisible(false);
+    editHalte.setVisible(false);
+    for (int i=0; i<5; i++) {
+      inB[i].setVisible(true);
+      if (i==0)
+        inB[i].setPromptText("input text outdoor " +i);
+      if (i>0)
+        inB[i].setPromptText("input text outdoor "+i +" (optional)");
+    }
+    buttonBrowse.setVisible(true);
+  }
+}
+PFont linuxFont12, linuxFont11, linuxFont14;
+PFont s11, s12, s14;
+PFont ubu11, ubu12, ubu14;
+Font source11, source12, source14;
+Font GuiUbu11, GuiUbu12, GuiUbu14;
+public void loadCurrentFont() {
+  linuxFont12 = createFont(sketchPath() +"/data/UbuntuMono.ttf", 12);
+  linuxFont11 = createFont(sketchPath() +"/data/UbuntuMono.ttf", 11);
+  linuxFont14 = createFont(sketchPath() +"/data/UbuntuMono.ttf", 14);
+  s12 = createFont(sketchPath() +"/data/SourceCodePro.ttf", 12);
+  s11 = createFont(sketchPath() +"/data/SourceCodePro.ttf", 11);
+  s14 = createFont(sketchPath() +"/data/SourceCodePro.ttf", 14);
+  ubu12 = createFont(sketchPath() +"/data/Ubuntu.ttf", 12);
+  ubu11 = createFont(sketchPath() +"/data/Ubuntu.ttf", 11);
+  ubu14 = createFont(sketchPath() +"/data/Ubuntu.ttf", 14);
+
+  source11 = new Font("SourceCodePro", Font.PLAIN, 11);
+  source12 = new Font("SourceCodePro", Font.PLAIN, 12);
+  source14 = new Font("SourceCodePro", Font.PLAIN, 14);
+
+  try {
+    GuiUbu11 = Font.createFont(Font.TRUETYPE_FONT, new File(sketchPath() +"/data/Ubuntu.ttf")).deriveFont(11f);
+    GuiUbu12 = Font.createFont(Font.TRUETYPE_FONT, new File(sketchPath() +"/data/Ubuntu.ttf")).deriveFont(12f);
+    GuiUbu14 = Font.createFont(Font.TRUETYPE_FONT, new File(sketchPath() +"/data/Ubuntu.ttf")).deriveFont(14f);
+  }
+  catch(Exception e)
+  {
+    e.printStackTrace();
+  }
+}
 GWindow voiceSettingWindow;
 GTextField inputPitch, inputRate, inputVolume;
 GButton buttonSaveConfig;
@@ -88,7 +397,7 @@ void saveTextFunction() {
       data += textIndoor.get(i);
     }
     output.println(data);
-    data = "list text outoor : ";
+    data = "list text outoor : s";
     for (int i=0; i<textOutdoor.size(); i++) {
       if (i>0)
         data += ",";
@@ -330,14 +639,14 @@ void createNewHalteWindow() {
 GWindow newWriteToSDWindow;
 GButton buttonLoadSetting, buttonWriteText, buttonWriteVoice;
 public void createWriteToSDWindow() {
-  newWriteToSDWindow = GWindow.getWindow(this, "write to sd", 150, 20, 500, 200, JAVA2D);
+  newWriteToSDWindow = GWindow.getWindow(this, "write to sd", 150, 20, 500, 300, JAVA2D);
   newWriteToSDWindow.noLoop();
   newWriteToSDWindow.setActionOnClose(G4P.CLOSE_WINDOW);
   newWriteToSDWindow.addDrawHandler(this, "newWriteToSDWindowHandler");
   //newWriteToSDWindow.addKeyHandler(this, "newHalteWindowKeyHandler");
   //newWriteToSDWindow.addMouseHandler(this, "newHalteWindowMouseHandler");
 
-  buttonLoadSetting = new GButton(newWriteToSDWindow, 10, 30, 90, 30);
+  buttonLoadSetting = new GButton(newWriteToSDWindow, 10, 40, 90, 30);
   buttonLoadSetting.setText("load setting");
   buttonLoadSetting.setOpaque(false);
   buttonLoadSetting.addEventHandler(this, "buttonLoadSettingHandler");
@@ -1109,13 +1418,13 @@ public void saveToFile(String u, String filename, String pathFileMp3) {
 GWindow please;
 Gif loadingGif;
 void pleaseWaitWindow(){
-  please = GWindow.getWindow(this, "please wait", 400, 350, 300, 160, JAVA2D);
+  please = GWindow.getWindow(this, "Warn", 400, 350, 350, 250, JAVA2D);
   please.noLoop();
   please.setActionOnClose(G4P.CLOSE_WINDOW);
   please.addDrawHandler(this, "pleaseWindowHandler");  
+  loadingGif = new Gif(this, "data/b.gif");
   loadingGif.loop();
   please.loop();
-  
 }
 boolean numberOrNot(String input)
 {
@@ -1128,4 +1437,573 @@ boolean numberOrNot(String input)
     return false;
   }
   return true;
+}
+/* =========================================================
+ * ====                   WARNING                        ===
+ * =========================================================
+ * The code in this tab has been generated from the GUI form
+ * designer and care should be taken when editing this file.
+ * Only add/edit code inside the event handlers i.e. only
+ * use lines between the matching comment tags. e.g.
+
+ void myBtnEvents(GButton button) { //_CODE_:button1:12356:
+     // It is safe to enter your event code here  
+ } //_CODE_:button1:12356:
+ 
+ * Do not rename this tab!
+ * =========================================================
+ */
+
+public void buttonNew_click(GButton source, GEvent event) { //_CODE_:buttonNew:677724:
+  println("buttonNew clicked");
+  newSettingWizard();
+} //_CODE_:buttonNew:677724:
+
+public void buttonLoad_click(GButton source, GEvent event) { //_CODE_:buttonLoad:917085:
+  println("buttonLoad clicked");
+   loadSettingWizard();
+} //_CODE_:buttonLoad:917085:
+
+public void buttonVoice_click(GButton source, GEvent event) { //_CODE_:buttonVoice:220763:
+  println("buttonVoice clicked");
+  voiceSetting();
+} //_CODE_:buttonVoice:220763:
+
+public void buttonSD_click(GButton source, GEvent event) { //_CODE_:buttonSD:263848:
+  println("buttonSD clicked");
+  createWriteToSDWindow();
+} //_CODE_:buttonSD:263848:
+
+public void buttonExit_click(GButton source, GEvent event) { //_CODE_:buttonExit:988049:
+  println("buttonExit clicked");
+  buttonExit();
+} //_CODE_:buttonExit:988049:
+
+
+
+// Create all the GUI controls. 
+// autogenerated do not edit
+public void createGUI(){
+  G4P.messagesEnabled(false);
+  G4P.setGlobalColorScheme(8);
+  G4P.setCursor(ARROW);
+  surface.setTitle("Configurator"); 
+  buttonNew = new GButton(this, 20, 30, 100, 30);
+  buttonNew.setText("New Setting");
+  buttonNew.addEventHandler(this, "buttonNew_click");
+  buttonLoad = new GButton(this, 20, 80, 100, 30);
+  buttonLoad.setText("Load Setting");
+  buttonLoad.addEventHandler(this, "buttonLoad_click");
+  buttonVoice = new GButton(this, 230, 30, 100, 30);
+  buttonVoice.setText("Voice Tuning");
+  buttonVoice.addEventHandler(this, "buttonVoice_click");
+  buttonSD = new GButton(this, 230, 80, 100, 30);
+  buttonSD.setText("Write To Sd Card");
+  buttonSD.addEventHandler(this, "buttonSD_click");
+  buttonExit = new GButton(this, 20, 130, 100, 30);
+  buttonExit.setText("Exit");
+  buttonExit.addEventHandler(this, "buttonExit_click");
+}
+
+// Variable declarations 
+// autogenerated do not edit
+GButton buttonNew; 
+GButton buttonLoad; 
+GButton buttonVoice; 
+GButton buttonSD; 
+GButton buttonExit; 
+//handler button
+public void buttonSaveVoiceConfiguration(GButton source, GEvent event) {
+  println("voice config saved");
+  String[] text = {inputPitch.getText() +"," +inputRate.getText() +"," +inputVolume.getText()};
+  String currentPath = sketchPath() + "/data/voice.cfg";
+  println(currentPath);
+  saveStrings(currentPath, text);
+  loadVoiceSetting();
+  voiceSettingWindow.close();
+  voiceSettingWindow = null;
+}
+public void buttonExit() {
+  exit();
+}
+public void buttonContinueHandler(GButton source, GEvent event) {
+  continueButtonFuntion();
+}
+public void buttonNextHandler(GButton source, GEvent event) {
+  nextButtonFuntion();
+}
+public void buttonBackHandler(GButton source, GEvent event) {
+  backButtonFunction();
+}
+public void editHalteHandler(GButton source, GEvent event) {
+  myKoridor.get(slideNum-1).namaKoridor = inputA.getText();
+  if (!myKoridor.get(slideNum-1).namaKoridor.isEmpty())
+    createListHalte();
+}
+public void inB1Handler(GButton source, GEvent event) {
+}
+public void inB2Handler(GButton source, GEvent event) {
+}
+public void inB3Handler(GButton source, GEvent event) {
+}
+public void inB4Handler(GButton source, GEvent event) {
+}
+public void inB5Handler(GButton source, GEvent event) {
+}
+public void saveHalteHandler(GButton source, GEvent event) {
+  saveCurrentHalte();
+}
+public void buttonLoadSettingHandler(GButton source, GEvent event) {
+  selectInput("Select a load setting file", "loadSettingLoaded");
+}
+void loadSettingLoaded(File selection) {
+  if (selection == null) {
+    println("Window was closed or the user hit cancel.");
+  } else {
+    loadSettingPath = selection.getAbsolutePath();
+    String lines[] = loadStrings(loadSettingPath);
+    println(lines.length);
+    boolean change = false; 
+    int korCount = 0; 
+    for (int i = 0; i < lines.length; i++) {
+      String[] list = split(lines[i], ":");
+      for (int j=0; j<list.length; j++) {
+        list[j] = trim(list[j]);
+        if (i == 0 && j == 1) {
+          korNum = int(list[j]);
+        } else if (i == 1 && j == 1) {
+          String[] newlist = split(list[j], ",");
+          //myKoridor = new koridor[newlist.length];
+          for (int k=0; k<newlist.length; k++) {
+            //myKoridor[k] = new koridor();
+            if (myKoridor.size() < korNum)
+              myKoridor.add(new koridor());
+            myKoridor.get(k).namaKoridor = trim(newlist[k]);
+          }
+        } else if (i == lines.length-2 && j == 1) {
+          String[] newlist = split(list[j], ",");
+          for (int k=0; k<newlist.length; k++) {
+            if (textIndoor.size() < newlist.length)
+              textIndoor.append(trim(newlist[k]));
+            else if (textIndoor.size() >= newlist.length)
+              textIndoor.set(k, trim(newlist[k]));
+          }
+        } else if (i == lines.length-1 && j == 1) {
+          String[] newlist = split(list[j], ",");
+          for (int k=0; k<newlist.length; k++) {
+            if (textOutdoor.size() < newlist.length)
+              textOutdoor.append(trim(newlist[k]));
+            else if (textOutdoor.size() >= newlist.length)
+              textOutdoor.set(k, trim(newlist[k]));
+          }
+        } else {
+          if ( i % 2 == 0 && j == 1) {
+            if (!change) {
+              myKoridor.get(korCount).totalHalteGo = int(list[j]);
+            } else if (change) {
+              myKoridor.get(korCount).totalHalteBack = int(list[j]);
+            }
+          } else if ( i % 2 != 0 && j == 1) {
+            if (!change) {
+              String[] newlist = split(list[j], ",");
+              for (int k=0; k<newlist.length; k++) {
+                if (myKoridor.get(korCount).namaHalteGo.size() < newlist.length)
+                  myKoridor.get(korCount).namaHalteGo.add(trim(newlist[k]));
+                else if (myKoridor.get(korCount).namaHalteGo.size() >= newlist.length)
+                  myKoridor.get(korCount).namaHalteGo.set(k, trim(newlist[k]));
+              }
+              //printArray(myKoridor[korCount].namaHalteGo);
+              change = true;
+            } else if (change) {
+              String[] newlist = split(list[j], ",");
+              for (int k=0; k<newlist.length; k++) {
+                if (myKoridor.get(korCount).namaHalteBack.size() < newlist.length)
+                  myKoridor.get(korCount).namaHalteBack.add(trim(newlist[k]));
+                else if (myKoridor.get(korCount).namaHalteBack.size() >= newlist.length)
+                  myKoridor.get(korCount).namaHalteBack.set(k, trim(newlist[k]));
+              }
+              //printArray(myKoridor[korCount].namaHalteBack);
+              change = false;
+              korCount ++;
+            }
+          }
+        }
+      }
+      //printArray(list);
+    }
+  }
+}
+public void buttonWriteTextHandler(GButton source, GEvent event) {
+  selectFolder("select sd card", "writeToSDCard");
+}
+void writeToSDCard(File selection) {
+  boolean change = false;
+  int fcount=0, ncount=0;
+
+  if (selection == null) {
+    println("Window was closed or the user hit cancel.");
+  } else {
+    if (!loadSettingPath.isEmpty()) {
+      String lines[] = loadStrings(loadSettingPath);
+      println(lines.length);
+      for (int i = 0; i < lines.length; i++) {
+        println(lines[i]);
+        String[] list = split(lines[i], ":");
+        printArray(list);
+
+        for (int j=0; j<list.length; j++) {
+          list[j] = trim(list[j]);
+          if (i == 0 && j == 1) {
+            korNum = int(list[j]);
+          } else if (i == 1 && j == 1) {
+            String[] newlist = split(list[j], ",");
+            //list koridor
+            saveStrings(selection +"/listkoridor.txt", newlist);
+          } else if (i == lines.length-2 && j == 1) {
+            String[] newlist = split(list[j], ",");
+            //textindoor
+            saveStrings(selection +"/textindoor.txt", newlist);
+          } else if (i == lines.length-1 && j == 1) {
+            String[] newlist = split(list[j], ",");
+            //textoutdoor
+            saveStrings(selection +"/textoutdoor.txt", newlist);
+          } else {
+            if ( i % 2 == 0 && j == 1) {
+              //total halte
+            } else if ( i % 2 != 0 && j == 1) {
+              if (!change) {
+                String[] newlist = split(list[j], ",");
+                saveStrings(selection +"/go" +fcount +".txt", newlist);
+                change = true;
+                fcount++;
+              } else if (change) {
+                String[] newlist = split(list[j], ",");
+                saveStrings(selection +"/back" +ncount +".txt", newlist);
+                change = false;
+                ncount++;
+              }
+            }
+          }
+        }
+      }
+      JOptionPane.showMessageDialog(null, "Save success", "Message", JOptionPane.WARNING_MESSAGE);
+    } else {
+      JOptionPane.showMessageDialog(null, "Load setting file first", "Error", JOptionPane.WARNING_MESSAGE);
+    }
+  }
+  newWriteToSDWindow.close();
+  newWriteToSDWindow = null;
+}
+public void buttonWriteVoiceHandler(GButton source, GEvent event) {
+  selectFolder("select sd card", "writeVoiceToSDCard");
+}
+void writeVoiceToSDCard(File selection) {
+  //String textVoice = "";
+  //String pitch = voicePitch;
+  //String rate = voiceRate;
+  //String vol = voiceVolume;
+  //String u= "http://code.responsivevoice.org/getvoice.php?t=" 
+  //  +textVoice +"&tl=id&sv=&vn=&pitch=" +pitch +"&rate=" +rate +"&vol=" +vol;
+
+  if (selection == null) {
+    println("Window was closed or the user hit cancel.");
+    JOptionPane.showMessageDialog(null, "no selection", "Error", JOptionPane.WARNING_MESSAGE);
+  } else {
+    if (!loadSettingPath.isEmpty()) {
+      pleaseWaitWindow();
+      createMp3(selection);
+      please.close(); 
+      please = null;
+    } else {
+      JOptionPane.showMessageDialog(null, "Load setting file first", "Error", JOptionPane.WARNING_MESSAGE);
+    }
+  }
+}
+void createMp3(File selection) {
+  String textVoice = "";
+  String pitch = voicePitch;
+  String rate = voiceRate;
+  String vol = voiceVolume;
+  for (int i=0; i<korNum; i++) {
+    String text = myKoridor.get(i).namaKoridor;
+    textVoice = text.replace(" ", "%20");
+    String u= "http://code.responsivevoice.org/getvoice.php?t=" 
+      +textVoice +"&tl=id&sv=&vn=&pitch=" +pitch +"&rate=" +rate +"&vol=" +vol;
+    saveToFile(u, text, selection.toString());
+
+    for (int j=0; j<myKoridor.get(i).namaHalteGo.size(); j++) {
+      text = myKoridor.get(i).namaHalteGo.get(j);
+      textVoice = text.replace(" ", "%20");
+      u= "http://code.responsivevoice.org/getvoice.php?t=" 
+        +textVoice +"&tl=id&sv=&vn=&pitch=" +pitch +"&rate=" +rate +"&vol=" +vol;
+      saveToFile(u, text, selection.toString());
+    }
+    for (int j=0; j<myKoridor.get(i).namaHalteBack.size(); j++) {
+      text = myKoridor.get(i).namaHalteBack.get(j);
+      textVoice = text.replace(" ", "%20");
+      u= "http://code.responsivevoice.org/getvoice.php?t=" 
+        +textVoice +"&tl=id&sv=&vn=&pitch=" +pitch +"&rate=" +rate +"&vol=" +vol;
+      saveToFile(u, text, selection.toString());
+    }
+  }
+  for (int i=0; i<textIndoor.size(); i++) {
+    String text = textIndoor.get(i);
+    textVoice = text.replace(" ", "%20");
+    String u= "http://code.responsivevoice.org/getvoice.php?t=" 
+      +textVoice +"&tl=id&sv=&vn=&pitch=" +pitch +"&rate=" +rate +"&vol=" +vol;
+    saveToFile(u, text, selection.toString());
+  }
+  for (int i=0; i<textOutdoor.size(); i++) {
+    String text = textOutdoor.get(i);
+    textVoice = text.replace(" ", "%20");
+    String u= "http://code.responsivevoice.org/getvoice.php?t=" 
+      +textVoice +"&tl=id&sv=&vn=&pitch=" +pitch +"&rate=" +rate +"&vol=" +vol;
+    saveToFile(u, text, selection.toString());
+  }
+}
+boolean browsed = false;
+public void browseHandler(GButton source, GEvent event) {
+  selectOutput("Select a file to write to:", "fileSelected");
+}
+void fileSelected(File selection) {
+  if (selection == null) {
+    println("Window was closed or the user hit cancel.");
+  } else {
+    browsed = true;
+    newSettingFilePath = selection.getAbsolutePath();
+  }
+}
+public void butMeButtonHandler(GButton source, GEvent event) {
+  for (int i=0; i<korNum; i++) {
+    if (source.tagNo == i) {
+      println("tag "+i +" clicked"); 
+      editHalteAndKoridor(i);
+    }
+  }
+}
+public void delMeButtonHandler(GButton source, GEvent event) {
+  int lastKorNum = korNum;
+  for (int i=0; i<lastKorNum; i++) {
+    delMe[i].dispose();
+    butMe[i].dispose();
+    me[i].dispose();
+    labelMe[i].dispose();
+
+    if (source.tagNo == i) {
+      myKoridor.remove(i);
+      korNum --;
+    }
+  }
+  refreshLoadWizard();
+}
+public void buttonSaveLoadSettingWizardHandler(GButton source, GEvent event) {
+  selectOutput("Save as:", "fileLoadSettingWizard");
+}
+public void buttonLocationLoadSettingWizardHandler(GButton source, GEvent event) {
+  //selectOutput("Save as:", "fileLoadSettingWizard");
+}
+void fileLoadSettingWizard(File selection) {
+  if (selection == null) {
+    println("Window was closed or the user hit cancel.");
+  } else {
+    browsed = true;
+    newSettingFilePath = selection.getAbsolutePath();
+    saveTextFunction();
+    println("saved to " +newSettingFilePath);
+    JOptionPane.showMessageDialog(null, "saved to " +newSettingFilePath, "save path", JOptionPane.WARNING_MESSAGE);
+    loadSettingWizardWindow.close(); 
+    loadSettingWizardWindow = null;
+  }
+}
+public void myButtonHandler(GButton source, GEvent event) {
+  saveTemporary();
+}
+public void delMyFieldHandler(GButton source, GEvent event) {
+  resetEditHalteAndKoridor(source);
+}
+public void addMyButtonHandler(GButton source, GEvent event) {
+  createAddNewHalteWindow();
+}
+public void buttonCreateHalteHandler(GButton source, GEvent event) {
+  int halteMode = dropHalte.getSelectedIndex();
+  String indexHalte = fieldIndexHalte.getText();
+  String namaHalte = fieldNamaHalte.getText();
+  if (!indexHalte.isEmpty() && !namaHalte.isEmpty()) {
+    if (numberOrNot(indexHalte) && int(indexHalte) > 0) {
+      if (halteMode == 0) {
+        if (int(indexHalte)-1 < myKoridor.get(currentHal).totalHalteGo +1) {
+          clearEditKoridor();
+          myKoridor.get(currentHal).totalHalteGo ++;
+          myKoridor.get(currentHal).namaHalteGo.add(int(indexHalte)-1, namaHalte);
+        } else {
+          JOptionPane.showMessageDialog(null, "index number too high", "Error", JOptionPane.WARNING_MESSAGE);
+        }
+      } else if (halteMode == 1) {
+        if (int(indexHalte)-1 < myKoridor.get(currentHal).totalHalteBack +1) {
+          clearEditKoridor();
+          myKoridor.get(currentHal).totalHalteBack ++;
+          myKoridor.get(currentHal).namaHalteBack.add(int(indexHalte)-1, namaHalte);
+        } else {
+          JOptionPane.showMessageDialog(null, "index number too high", "Error", JOptionPane.WARNING_MESSAGE);
+        }
+      }      
+      addNewHalteWindow.close();
+      addNewHalteWindow = null; 
+      refreshEditHalteAndKoridor();
+    } else {
+      JOptionPane.showMessageDialog(null, "field cannot be empty, index must be number and greater than zero", "Error", JOptionPane.WARNING_MESSAGE);
+    }
+  } else {
+    JOptionPane.showMessageDialog(null, "field cannot be empty", "Error", JOptionPane.WARNING_MESSAGE);
+  }
+}
+void clearEditKoridor() {
+  int totHalteGo = myKoridor.get(currentHal).totalHalteGo;
+  int totHalteBack = myKoridor.get(currentHal).totalHalteBack;
+  int tot = totHalteGo+totHalteBack+1;
+  for (int j=0; j<tot; j++) {
+    if (j > 0 && j<=totHalteGo) {
+      int k = j - 1;
+      myField[j].dispose();
+      myLabelField[j].dispose();
+      delMyField[j].dispose();
+    } else if (j > totHalteGo) {
+      int k = j - (totHalteGo+1);
+      myField[j].dispose();
+      myLabelField[j].dispose();
+      delMyField[j].dispose();
+    }
+  }
+}
+public void buttonAddLoadSettingWizardHandler(GButton source, GEvent event) {
+  createAddNewKoridorWindow();
+}
+public void buttonCreateKoridorHandler(GButton source, GEvent event) {
+  String indexKoridor = fieldIndexKoridor.getText();
+  String namaKoridor = fieldNamaKoridor.getText();
+  if (!indexKoridor.isEmpty() && !namaKoridor.isEmpty()) {
+    if (numberOrNot(indexKoridor) && int(indexKoridor) > 0) {
+      if (int(indexKoridor)-1 < korNum +1) {        
+        clearKoridor();
+        korNum ++;
+        myKoridor.add(int(indexKoridor)-1, new koridor());
+        myKoridor.get(int(indexKoridor)-1).namaKoridor = namaKoridor;
+        addNewKoridorWindow.close();
+        addNewKoridorWindow = null;
+        refreshLoadWizard();
+      } else {
+        JOptionPane.showMessageDialog(null, "index numberr too high", "Error", JOptionPane.WARNING_MESSAGE);
+      }
+    } else {
+      JOptionPane.showMessageDialog(null, "field cannot be empty, index must be number and greater than zero", "Error", JOptionPane.WARNING_MESSAGE);
+    }
+  } else {
+    JOptionPane.showMessageDialog(null, "field cannot be empty", "Error", JOptionPane.WARNING_MESSAGE);
+  }
+}
+void clearKoridor() {
+  int lastKorNum = korNum;
+  for (int i=0; i<lastKorNum; i++) {
+    delMe[i].dispose();
+    butMe[i].dispose();
+    me[i].dispose();
+    labelMe[i].dispose();
+  }
+}
+public void buttonIndoorLoadSettingWizardHandler(GButton source, GEvent event) {
+  createEditTextIndoorWindow();
+}
+public void buttonSaveTextIndoorHandler(GButton source, GEvent event) {
+  for (int i=0; i<5; i++) {
+    textIndoor.set(i, fieldEditTextIndoor[i].getText());
+  }
+  editTextIndoorWindow.close();
+  editTextIndoorWindow = null;
+}
+public void buttonOutdoorLoadSettingWizardHandler(GButton source, GEvent event) {
+  createEditTextOutdoorWindow();
+}
+public void buttonSaveTextOutdoorHandler(GButton source, GEvent event) {
+  for (int i=0; i<5; i++) {
+    textOutdoor.set(i, fieldEditTextOutdoor[i].getText());
+  }
+  editTextOutdoorWindow.close();
+  editTextOutdoorWindow = null;
+}
+//handler option
+public void optYesHandler(GOption source, GEvent event) {
+  myKoridor.get(slideNum-1).choice = true;
+  optYes.setSelected(true);
+  optNo.setSelected(false);
+  yesOptionFunction();
+}
+public void optNoHandler(GOption source, GEvent event) {
+  myKoridor.get(slideNum-1).choice = false;
+  optYes.setSelected(false);
+  optNo.setSelected(true);
+  noOptionFunction() ;
+}
+//handler input
+public void inputAHandler(GTextField source, GEvent event) {
+  if (event == GEvent.ENTERED && newSetSlideNum == 0) {
+    continueButtonFuntion();
+  }
+}
+public void in1Handler(GTextField source, GEvent event) {
+  if (event == GEvent.ENTERED && !in2.isVisible()) {
+    myKoridor.get(slideNum-1).namaKoridor = inputA.getText();
+    if (!myKoridor.get(slideNum-1).namaKoridor.isEmpty())
+      createListHalte();
+  }
+}
+public  void in2Handler(GTextField source, GEvent event) {
+  if (event == GEvent.ENTERED) {
+    myKoridor.get(slideNum-1).namaKoridor = inputA.getText();
+    if (!myKoridor.get(slideNum-1).namaKoridor.isEmpty())
+      createListHalte();
+  }
+}
+public void halteEnterHandler(GTextField source, GEvent event) {
+  if (event == GEvent.ENTERED) {
+    saveCurrentHalte();
+  }
+}
+//handler key
+public void newHalteWindowKeyHandler(PApplet app, GWinData data, KeyEvent event) {
+  if (event.getAction() == KeyEvent.PRESS && app.keyCode == UP) {
+    panelHalte.moveTo(0, panelHalte.getY()-2);
+  } else if (event.getAction() == KeyEvent.PRESS && app.keyCode == DOWN) {
+    panelHalte.moveTo(0, panelHalte.getY()+2);
+  }
+}
+//handler mouse
+public void newHalteWindowMouseHandler(PApplet app, GWinData data, MouseEvent mevent) {
+  if (mevent.getAction() == MouseEvent.WHEEL) {
+    panelHalte.moveTo(0, panelHalte.getY() +(10*mevent.getCount()));
+  }
+}
+public void loadSettingWizardWindowMouseHandler(PApplet app, GWinData data, MouseEvent mevent) {
+  if (mevent.getAction() == MouseEvent.WHEEL) {
+    groupLoadSettingWizard.moveTo(0, groupLoadSettingWizard.getY() +(10*mevent.getCount()));
+  }
+}
+public void editHalteAndKoridorWindowMouseHandler(PApplet app, GWinData data, MouseEvent mevent) {
+  if (mevent.getAction() == MouseEvent.WHEEL) {
+    editHalteAndKoridorPanel.moveTo(0, editHalteAndKoridorPanel.getY() +(10*mevent.getCount()));
+  }
+}
+public class koridor {
+  // The variables can be anything you like.
+  String namaKoridor;
+  int totalHalteGo, totalHalteBack;
+  ArrayList<String> namaHalteGo, namaHalteBack;
+  boolean choice;
+  koridor(){
+    namaKoridor = "";
+    totalHalteBack = 0;
+    totalHalteGo = 0;
+    namaHalteGo = new ArrayList<String>();
+    namaHalteBack = new ArrayList<String>();
+    choice = true;
+  }
 }

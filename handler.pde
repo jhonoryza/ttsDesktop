@@ -179,28 +179,21 @@ void writeToSDCard(File selection) {
       catch (IOException iae) {
         System.out.println("File Not Found");
       }
-      JOptionPane.showMessageDialog(null, "Save success", "Message", JOptionPane.WARNING_MESSAGE);
+      //JOptionPane.showMessageDialog(null, "Save success", "Message", JOptionPane.WARNING_MESSAGE);
     } else {
       JOptionPane.showMessageDialog(null, "Load setting file first", "Error", JOptionPane.WARNING_MESSAGE);
     }
   }
-  newWriteToSDWindow.close();
-  newWriteToSDWindow = null;
+  //newWriteToSDWindow.close();
+  //newWriteToSDWindow = null;
 }
 public void buttonWriteVoiceHandler(GButton source, GEvent event) {
   selectFolder("select sd card", "writeVoiceToSDCard");
 }
 void writeVoiceToSDCard(File selection) {
-  //String textVoice = "";
-  //String pitch = voicePitch;
-  //String rate = voiceRate;
-  //String vol = voiceVolume;
-  //String u= "http://code.responsivevoice.org/getvoice.php?t=" 
-  //  +textVoice +"&tl=id&sv=&vn=&pitch=" +pitch +"&rate=" +rate +"&vol=" +vol;
-
   if (selection == null) {
     println("Window was closed or the user hit cancel.");
-    JOptionPane.showMessageDialog(null, "no selection", "Error", JOptionPane.WARNING_MESSAGE);
+    //JOptionPane.showMessageDialog(null, "no selection", "Error", JOptionPane.WARNING_MESSAGE);
   } else {
     if (!loadSettingPath.isEmpty()) {
       pleaseWaitWindow();
