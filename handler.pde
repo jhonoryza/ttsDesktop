@@ -172,6 +172,13 @@ void writeToSDCard(File selection) {
           }
         }
       }
+      Desktop desktop = Desktop.getDesktop();
+      try {
+        desktop.open(selection);
+      } 
+      catch (IOException iae) {
+        System.out.println("File Not Found");
+      }
       JOptionPane.showMessageDialog(null, "Save success", "Message", JOptionPane.WARNING_MESSAGE);
     } else {
       JOptionPane.showMessageDialog(null, "Load setting file first", "Error", JOptionPane.WARNING_MESSAGE);
@@ -200,6 +207,13 @@ void writeVoiceToSDCard(File selection) {
       createMp3(selection);
       please.close(); 
       please = null;
+      Desktop desktop = Desktop.getDesktop();
+      try {
+        desktop.open(selection);
+      } 
+      catch (IOException iae) {
+        System.out.println("File Not Found");
+      }
     } else {
       JOptionPane.showMessageDialog(null, "Load setting file first", "Error", JOptionPane.WARNING_MESSAGE);
     }

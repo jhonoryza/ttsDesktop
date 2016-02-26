@@ -5,7 +5,7 @@ import javax.swing.JOptionPane;
 import java.net.*;
 import java.io.*;
 import gifAnimation.*;
-
+import java.awt.Desktop;
 //public variable
 String voicePitch, voiceRate, voiceVolume, newSettingFilePath, loadSettingPath, loadSettingWizardPath;
 StringList textIndoor, textOutdoor;
