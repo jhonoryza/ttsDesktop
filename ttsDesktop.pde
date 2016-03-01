@@ -25,14 +25,14 @@ public void setup() {
   println(sketchPath());
   loadVoiceSetting();
   frameRate(20);
-  loopingGif = new Gif(this, "data/a.gif");
-  loopingGif.loop();
+  //loopingGif = new Gif(this, "data/a.gif");
+  //loopingGif.loop();
   loadingGif = new Gif(this, "data/b.gif");
 }
 public void draw() {
   background(240);
   noStroke();
-  image(loopingGif, width/2 - loopingGif.width/2, height / 2 - loopingGif.height / 2);
+  //image(loopingGif, width/2 - loopingGif.width/2, height / 2 - loopingGif.height / 2);
   //border bawah
   fill(255, 200);
   rect(0, height-20, width, 20);
@@ -86,6 +86,7 @@ synchronized public void win_drawNewSetting(PApplet appc, GWinData data) {
 
   if (newSetSlideNum == 0) {
     appc.text("Input total koridor :", 10, 60);
+    appc.text("Template suara pemberhentian halte ", 10, 100);
   } else if (newSetSlideNum == 1) {
     appc.text("Input nama koridor " +slideNum, 10, 60);
     appc.text("Total halte (jalur pergi) == Total halte (jalur pulang) ?", 10, 110);

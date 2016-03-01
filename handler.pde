@@ -39,6 +39,25 @@ public void inB5Handler(GButton source, GEvent event) {
 public void saveHalteHandler(GButton source, GEvent event) {
   saveCurrentHalte();
 }
+public void buttonPreviewVoiceHandler(GButton source, GEvent event) {
+  String pitch = voicePitch;
+  String rate = voiceRate;
+  String vol = voiceVolume;
+  String textVoice = inPreTemp.getText() + inHal.getText() + inAfterTemp.getText();
+  textVoice = textVoice.replace(" ", "%20");
+  String u = "http://code.responsivevoice.org/getvoice.php?t=" 
+    +textVoice +"&tl=id&sv=&vn=&pitch=" +pitch +"&rate=" +rate +"&vol=" +vol;
+  String loc = sketchPath() +"/data/";
+  saveToFile(u, "previewvoice", loc);
+  File meFile = new File(loc);
+  Desktop desktop = Desktop.getDesktop();
+  try {
+    desktop.open(meFile);
+  } 
+  catch (IOException iae) {
+    System.out.println("File Not Found");
+  }
+}
 public void buttonLoadSettingHandler(GButton source, GEvent event) {
   selectInput("Select a load setting file", "loadSettingLoaded");
 }
@@ -217,7 +236,7 @@ void createMp3(File selection) {
   String pitch = voicePitch;
   String rate = voiceRate;
   String vol = voiceVolume;
-  for (int i=0; i<korNum; i++) {
+  for (int i=0; i<myKoridor.size(); i++) {
     String text = myKoridor.get(i).namaKoridor;
     textVoice = text.replace(" ", "%20");
     String u= "http://code.responsivevoice.org/getvoice.php?t=" 
@@ -407,7 +426,12 @@ public void buttonIndoorLoadSettingWizardHandler(GButton source, GEvent event) {
   createEditTextIndoorWindow();
 }
 public void buttonSaveTextIndoorHandler(GButton source, GEvent event) {
+  int total = 0;
   for (int i=0; i<5; i++) {
+    if (fieldEditTextIndoor[i].getText() != null && !fieldEditTextIndoor[i].getText().isEmpty() )
+      total = i;
+  }
+  for (int i=0; i<total; i++) {
     textIndoor.set(i, fieldEditTextIndoor[i].getText());
   }
   editTextIndoorWindow.close();
@@ -417,7 +441,12 @@ public void buttonOutdoorLoadSettingWizardHandler(GButton source, GEvent event) 
   createEditTextOutdoorWindow();
 }
 public void buttonSaveTextOutdoorHandler(GButton source, GEvent event) {
+  int total = 0;
   for (int i=0; i<5; i++) {
+    if (fieldEditTextOutdoor[i].getText() != null && !fieldEditTextOutdoor[i].getText().isEmpty() )
+      total = i;
+  }
+  for (int i=0; i<total; i++) {
     textOutdoor.set(i, fieldEditTextOutdoor[i].getText());
   }
   editTextOutdoorWindow.close();

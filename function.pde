@@ -106,8 +106,8 @@ void saveTextFunction() {
 
 GWindow newSettingWindow;
 GLabel labelText, labela, labelb;
-GButton buttonNext, buttonContinue, buttonBack, editHalte, buttonBrowse;
-GTextField inputA, in1, in2; 
+GButton buttonNext, buttonContinue, buttonBack, editHalte, buttonBrowse, buttonPreviewVoice;
+GTextField inputA, in1, in2, inPreTemp, inAfterTemp, inHal; 
 GTextField[] inB;
 GOption optYes, optNo;
 GToggleGroup optGroup;
@@ -117,6 +117,21 @@ public void newSettingWizard() {
   newSettingWindow.noLoop();
   newSettingWindow.setActionOnClose(G4P.CLOSE_WINDOW);
   newSettingWindow.addDrawHandler(this, "win_drawNewSetting");
+  //page continue
+  inPreTemp = new GTextField(newSettingWindow, 10, 105, 360, 20, G4P.SCROLLBARS_NONE);
+  inPreTemp.setText("pemberhentian berikutnya,");
+  inPreTemp.setFont(GuiUbu11);
+  inHal = new GTextField(newSettingWindow, 10, inPreTemp.getY()+25, 360, 20, G4P.SCROLLBARS_NONE);
+  inHal.setText("halte kopo");
+  inHal.setFont(GuiUbu11);
+  inAfterTemp = new GTextField(newSettingWindow, 10, inHal.getY()+25, 360, 20, G4P.SCROLLBARS_NONE);
+  inAfterTemp.setText(",perhatikan barang bawaan anda dan hati hati melangkah, terimakasih");
+  inAfterTemp.setFont(GuiUbu11);
+  buttonPreviewVoice = new GButton(newSettingWindow, 10, inAfterTemp.getY()+25, 90, 25);
+  buttonPreviewVoice.setText("preview voice");
+  buttonPreviewVoice.setOpaque(false);
+  buttonPreviewVoice.addEventHandler(this, "buttonPreviewVoiceHandler");
+  buttonPreviewVoice.setFont(GuiUbu11);
   //media
   buttonContinue = new GButton(newSettingWindow, newSettingWindow.width-70, newSettingWindow.height-30, 60, 25);
   buttonContinue.setOpaque(false);
@@ -124,9 +139,8 @@ public void newSettingWizard() {
   buttonContinue.addEventHandler(this, "buttonContinueHandler");
   buttonContinue.setFont(GuiUbu11);
   inputA = new GTextField(newSettingWindow, 10, 65, 260, 20, G4P.SCROLLBARS_NONE);
-  inputA.setOpaque(false);
   inputA.addEventHandler(this, "inputAHandler");
-  inputA.setPromptText("input total koridor");
+  inputA.setPromptText("input here");
   inputA.setFont(GuiUbu11);
   inB = new GTextField[5];
   inB[0] = new GTextField(newSettingWindow, 10, 65, 260, 20, G4P.SCROLLBARS_NONE);
@@ -324,7 +338,7 @@ void createNewHalteWindow() {
   }
 
   //add handler to the last input
-  inputHalteBack[myKoridor.get(slideNum-1).totalHalteBack-1].addEventHandler(this, "halteEnterHandler");
+  //inputHalteBack[myKoridor.get(slideNum-1).totalHalteBack-1].addEventHandler(this, "halteEnterHandler");
   newHalteWindow.loop();
 }
 GWindow newWriteToSDWindow;
@@ -524,7 +538,7 @@ public void backButtonFunction() {
     if (slideNum < 1) {
       newSetSlideNum = 0;
       slideNum = 0;
-      myKoridor.remove(slideNum-1);
+      //myKoridor.remove(slideNum-1);
       GUINewSetSlideNum0();
       inputA.setPromptText("Input Jumlah Koridor");
     } else {
