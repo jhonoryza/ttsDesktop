@@ -49,14 +49,16 @@ public void buttonPreviewVoiceHandler(GButton source, GEvent event) {
     +textVoice +"&tl=id&sv=&vn=&pitch=" +pitch +"&rate=" +rate +"&vol=" +vol;
   String loc = sketchPath() +"/data/";
   saveToFile(u, "previewvoice", loc);
-  File meFile = new File(loc);
-  Desktop desktop = Desktop.getDesktop();
-  try {
-    desktop.open(meFile);
-  } 
-  catch (IOException iae) {
-    System.out.println("File Not Found");
-  }
+  player = minim.loadFile(loc +"previewvoice.mp3");
+  player.play();
+  //File meFile = new File(loc);
+  //Desktop desktop = Desktop.getDesktop();
+  //try {
+  //  desktop.open(meFile);
+  //} 
+  //catch (IOException iae) {
+  //  System.out.println("File Not Found");
+  //}
 }
 public void buttonLoadSettingHandler(GButton source, GEvent event) {
   selectInput("Select a load setting file", "loadSettingLoaded");

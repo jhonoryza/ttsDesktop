@@ -6,12 +6,17 @@ import java.net.*;
 import java.io.*;
 import gifAnimation.*;
 import java.awt.Desktop;
+import ddf.minim.*;
+
+Minim minim;
+AudioPlayer player;
 //public variable
 String voicePitch, voiceRate, voiceVolume, newSettingFilePath, loadSettingPath, loadSettingWizardPath;
 StringList textIndoor, textOutdoor;
 GGroup mainGroup;
 Gif loopingGif;
 public void setup() {
+   minim = new Minim(this);
   newSettingFilePath = sketchPath() +"/data/my.cfg";
   loadSettingPath = ""; 
   loadSettingWizardPath = "";
