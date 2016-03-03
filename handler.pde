@@ -87,7 +87,7 @@ void loadSettingLoaded(File selection) {
               myKoridor.add(new koridor());
             myKoridor.get(k).namaKoridor = trim(newlist[k]);
           }
-        } else if (i == lines.length-2 && j == 1) {
+        } else if (i == lines.length-4 && j == 1) {
           String[] newlist = split(list[j], ",");
           for (int k=0; k<newlist.length; k++) {
             if (textIndoor.size() < newlist.length)
@@ -95,7 +95,7 @@ void loadSettingLoaded(File selection) {
             else if (textIndoor.size() >= newlist.length)
               textIndoor.set(k, trim(newlist[k]));
           }
-        } else if (i == lines.length-1 && j == 1) {
+        } else if (i == lines.length-3 && j == 1) {
           String[] newlist = split(list[j], ",");
           for (int k=0; k<newlist.length; k++) {
             if (textOutdoor.size() < newlist.length)
@@ -103,6 +103,10 @@ void loadSettingLoaded(File selection) {
             else if (textOutdoor.size() >= newlist.length)
               textOutdoor.set(k, trim(newlist[k]));
           }
+        } else if (i == lines.length-2 && j == 1) {
+          preText = list[j];
+        } else if (i == lines.length-1 && j == 1) {
+          afterText = list[j];
         } else {
           if ( i % 2 == 0 && j == 1) {
             if (!change) {
@@ -166,11 +170,11 @@ void writeToSDCard(File selection) {
             String[] newlist = split(list[j], ",");
             //list koridor
             saveStrings(selection +"/listkoridor.txt", newlist);
-          } else if (i == lines.length-2 && j == 1) {
+          } else if (i == lines.length-4 && j == 1) {
             String[] newlist = split(list[j], ",");
             //textindoor
             saveStrings(selection +"/textindoor.txt", newlist);
-          } else if (i == lines.length-1 && j == 1) {
+          } else if (i == lines.length-3 && j == 1) {
             String[] newlist = split(list[j], ",");
             //textoutdoor
             saveStrings(selection +"/textoutdoor.txt", newlist);
@@ -239,25 +243,31 @@ void createMp3(File selection) {
   String rate = voiceRate;
   String vol = voiceVolume;
   for (int i=0; i<myKoridor.size(); i++) {
-    String text = myKoridor.get(i).namaKoridor;
-    textVoice = text.replace(" ", "%20");
-    String u= "http://code.responsivevoice.org/getvoice.php?t=" 
-      +textVoice +"&tl=id&sv=&vn=&pitch=" +pitch +"&rate=" +rate +"&vol=" +vol;
-    saveToFile(u, text, selection.toString());
+    String text; 
+    String nameFile; 
+    String u;
+    //text = preText +"koridor " +myKoridor.get(i).namaKoridor +afterText;
+    //String nameFile = myKoridor.get(i).namaKoridor;
+    //textVoice = text.replace(" ", "%20");
+    //String u= "http://code.responsivevoice.org/getvoice.php?t=" 
+    //  +textVoice +"&tl=id&sv=&vn=&pitch=" +pitch +"&rate=" +rate +"&vol=" +vol;
+    //saveToFile(u, nameFile, selection.toString());
 
     for (int j=0; j<myKoridor.get(i).namaHalteGo.size(); j++) {
-      text = myKoridor.get(i).namaHalteGo.get(j);
+      text = preText +"halte " +myKoridor.get(i).namaHalteGo.get(j) +afterText;
+      nameFile = myKoridor.get(i).namaHalteGo.get(j);
       textVoice = text.replace(" ", "%20");
       u= "http://code.responsivevoice.org/getvoice.php?t=" 
         +textVoice +"&tl=id&sv=&vn=&pitch=" +pitch +"&rate=" +rate +"&vol=" +vol;
-      saveToFile(u, text, selection.toString());
+      saveToFile(u, nameFile, selection.toString());
     }
     for (int j=0; j<myKoridor.get(i).namaHalteBack.size(); j++) {
-      text = myKoridor.get(i).namaHalteBack.get(j);
+      text = preText +"halte " +myKoridor.get(i).namaHalteBack.get(j) +afterText;
+      nameFile = myKoridor.get(i).namaHalteBack.get(j);
       textVoice = text.replace(" ", "%20");
       u= "http://code.responsivevoice.org/getvoice.php?t=" 
         +textVoice +"&tl=id&sv=&vn=&pitch=" +pitch +"&rate=" +rate +"&vol=" +vol;
-      saveToFile(u, text, selection.toString());
+      saveToFile(u, nameFile, selection.toString());
     }
   }
   for (int i=0; i<textIndoor.size(); i++) {
@@ -453,6 +463,15 @@ public void buttonSaveTextOutdoorHandler(GButton source, GEvent event) {
   }
   editTextOutdoorWindow.close();
   editTextOutdoorWindow = null;
+}
+public void buttonPreTextLoadSettingWizardHandler(GButton source, GEvent event) {
+  editPreTextWindow();
+}
+public void saveMeHandler(GButton source, GEvent event) {
+  preText = inPreField.getText();
+  afterText = inAfterField.getText();
+  pretextWindow.close();
+  pretextWindow = null;
 }
 //handler option
 public void optYesHandler(GOption source, GEvent event) {

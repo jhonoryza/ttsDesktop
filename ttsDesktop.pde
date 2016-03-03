@@ -11,12 +11,14 @@ import ddf.minim.*;
 Minim minim;
 AudioPlayer player;
 //public variable
-String voicePitch, voiceRate, voiceVolume, newSettingFilePath, loadSettingPath, loadSettingWizardPath;
+String voicePitch, voiceRate, voiceVolume, newSettingFilePath, loadSettingPath, loadSettingWizardPath, preText, afterText;
 StringList textIndoor, textOutdoor;
 GGroup mainGroup;
 Gif loopingGif;
 public void setup() {
-   minim = new Minim(this);
+  preText = "pemberhentian berikutnya,";
+  afterText = ",perhatikan barang bawaan anda dan hati hati melangkah, terimakasih";
+  minim = new Minim(this);
   newSettingFilePath = sketchPath() +"/data/my.cfg";
   loadSettingPath = ""; 
   loadSettingWizardPath = "";
@@ -225,6 +227,17 @@ synchronized public void pleaseWindowHandler(PApplet appc, GWinData data) {
   //textFont(ubu11);
   //appc.text("please wait", appc.width/2 - 30, 20);
 }
+synchronized public void pretextWindowHandler(PApplet appc, GWinData data) {
+  appc.background(240);
+  appc.noStroke();
+  appc.fill(0);
+  textFont(ubu11);
+  appc.text("pre text", 10, 15);
+  appc.text("after text", 10, 60);
+  //border
+  appc.fill(255, 255, 255, 200);
+  appc.rect(0, appc.height - appc.height/3, appc.width, appc.height/3);
+}
 public void GUINewSetSlideNum0() {
   if (buttonNext != null && buttonBack != null && buttonContinue != null && optYes != null && optNo != null && in1 != null && in2 != null && editHalte != null) {
     buttonNext.setVisible(false);
@@ -238,6 +251,10 @@ public void GUINewSetSlideNum0() {
     for (int i=0; i<5; i++)
       inB[i].setVisible(false);
     buttonBrowse.setVisible(false);
+    inPreTemp.setVisible(true);
+    inAfterTemp.setVisible(true);
+    inHal.setVisible(true);
+    buttonPreviewVoice.setVisible(true);
   }
 }
 boolean muncul = false;
@@ -255,6 +272,10 @@ public void GUINewSetSlideNum1() {
     for (int i=0; i<5; i++)
       inB[i].setVisible(false);
     buttonBrowse.setVisible(false);
+    inPreTemp.setVisible(false);
+    inAfterTemp.setVisible(false);
+    inHal.setVisible(false);
+    buttonPreviewVoice.setVisible(false);
   }
 }
 public void GUINewSetSlideNum2() {
@@ -274,6 +295,10 @@ public void GUINewSetSlideNum2() {
         inB[i].setPromptText("input text indoor "+i +" (optional)");
     }
     buttonBrowse.setVisible(false);
+    inPreTemp.setVisible(false);
+    inAfterTemp.setVisible(false);
+    inHal.setVisible(false);
+    buttonPreviewVoice.setVisible(false);
   }
 }
 public void GUINewSetSlideNum3() {
@@ -293,5 +318,9 @@ public void GUINewSetSlideNum3() {
         inB[i].setPromptText("input text outdoor "+i +" (optional)");
     }
     buttonBrowse.setVisible(true);
+    inPreTemp.setVisible(false);
+    inAfterTemp.setVisible(false);
+    inHal.setVisible(false);
+    buttonPreviewVoice.setVisible(false);
   }
 }

@@ -97,7 +97,8 @@ void saveTextFunction() {
     output.println(data);
     data = "";
   }
-
+  output.println("pre text : " +preText);
+  output.println("afer text: " +afterText);
   output.flush(); // Writes the remaining data to the file
   output.close(); // Finishes the file
   //exit(); // Stops the program
@@ -119,13 +120,13 @@ public void newSettingWizard() {
   newSettingWindow.addDrawHandler(this, "win_drawNewSetting");
   //page continue
   inPreTemp = new GTextField(newSettingWindow, 10, 105, 360, 20, G4P.SCROLLBARS_NONE);
-  inPreTemp.setText("pemberhentian berikutnya,");
+  inPreTemp.setText(preText);
   inPreTemp.setFont(GuiUbu11);
   inHal = new GTextField(newSettingWindow, 10, inPreTemp.getY()+25, 360, 20, G4P.SCROLLBARS_NONE);
   inHal.setText("halte kopo");
   inHal.setFont(GuiUbu11);
   inAfterTemp = new GTextField(newSettingWindow, 10, inHal.getY()+25, 360, 20, G4P.SCROLLBARS_NONE);
-  inAfterTemp.setText(",perhatikan barang bawaan anda dan hati hati melangkah, terimakasih");
+  inAfterTemp.setText(afterText);
   inAfterTemp.setFont(GuiUbu11);
   buttonPreviewVoice = new GButton(newSettingWindow, 10, inAfterTemp.getY()+25, 90, 25);
   buttonPreviewVoice.setText("preview voice");
@@ -441,6 +442,8 @@ public void continueButtonFuntion() {
     myKoridor = new ArrayList<koridor>();
     //new koridor[korNum];
     //println(myKoridor.length);
+    preText = inPreTemp.getText();
+    afterText = inAfterTemp.getText();
     newSetSlideNum = 1;
     slideNum += 1;
     myKoridor.add(new koridor());
@@ -621,7 +624,7 @@ void loadSettingWizardLoaded(File selection) {
                 myKoridor.add(new koridor());
               myKoridor.get(k).namaKoridor = trim(newlist[k]);
             }
-          } else if (i == lines.length-2 && j == 1) {
+          } else if (i == lines.length-4 && j == 1) {
             String[] newlist = split(list[j], ",");
             for (int k=0; k<newlist.length; k++) {
               if (textIndoor.size() < newlist.length)
@@ -629,7 +632,7 @@ void loadSettingWizardLoaded(File selection) {
               else if (textIndoor.size() >= newlist.length)
                 textIndoor.set(k, trim(newlist[k]));
             }
-          } else if (i == lines.length-1 && j == 1) {
+          } else if (i == lines.length-3 && j == 1) {
             String[] newlist = split(list[j], ",");
             for (int k=0; k<newlist.length; k++) {
               if (textOutdoor.size() < newlist.length)
@@ -637,7 +640,11 @@ void loadSettingWizardLoaded(File selection) {
               else if (textOutdoor.size() >= newlist.length)
                 textOutdoor.set(k, trim(newlist[k]));
             }
-          } else {
+          } else if (i == lines.length-2 && j == 1) {
+            preText = list[j];
+          } else if (i == lines.length-1 && j == 1) {
+            afterText = list[j];
+          }else {
             if ( i % 2 == 0 && j == 1) {
               if (!change) {
                 myKoridor.get(korCount).totalHalteGo = int(list[j]);
@@ -736,15 +743,20 @@ void loadSettingWizardLoaded(File selection) {
       buttonAddLoadSettingWizard.setText("add new koridor");
       buttonAddLoadSettingWizard.addEventHandler(this, "buttonAddLoadSettingWizardHandler");
 
-      GButton buttonIndoorLoadSettingWizard = new GButton(loadSettingWizardWindow, loadSettingWizardWindow.width-120, loadSettingWizardWindow.height-160, 100, 35);
-      buttonIndoorLoadSettingWizard.setOpaque(false);
-      buttonIndoorLoadSettingWizard.setText("edit text outdoor");
-      buttonIndoorLoadSettingWizard.addEventHandler(this, "buttonOutdoorLoadSettingWizardHandler");
-
-      GButton buttonOutdoorLoadSettingWizard = new GButton(loadSettingWizardWindow, loadSettingWizardWindow.width-120, loadSettingWizardWindow.height-210, 100, 35);
+      GButton buttonOutdoorLoadSettingWizard = new GButton(loadSettingWizardWindow, loadSettingWizardWindow.width-120, loadSettingWizardWindow.height-160, 100, 35);
       buttonOutdoorLoadSettingWizard.setOpaque(false);
-      buttonOutdoorLoadSettingWizard.setText("edit text indoor");
-      buttonOutdoorLoadSettingWizard.addEventHandler(this, "buttonIndoorLoadSettingWizardHandler");
+      buttonOutdoorLoadSettingWizard.setText("edit text outdoor");
+      buttonOutdoorLoadSettingWizard.addEventHandler(this, "buttonOutdoorLoadSettingWizardHandler");
+
+      GButton buttonIndoorLoadSettingWizard = new GButton(loadSettingWizardWindow, loadSettingWizardWindow.width-120, loadSettingWizardWindow.height-210, 100, 35);
+      buttonIndoorLoadSettingWizard.setOpaque(false);
+      buttonIndoorLoadSettingWizard.setText("edit text indoor");
+      buttonIndoorLoadSettingWizard.addEventHandler(this, "buttonIndoorLoadSettingWizardHandler");
+
+      GButton buttonPreTextLoadSettingWizard = new GButton(loadSettingWizardWindow, loadSettingWizardWindow.width-120, loadSettingWizardWindow.height-260, 100, 35);
+      buttonPreTextLoadSettingWizard.setOpaque(false);
+      buttonPreTextLoadSettingWizard.setText("edit pre text");
+      buttonPreTextLoadSettingWizard.addEventHandler(this, "buttonPreTextLoadSettingWizardHandler");
 
       loadSettingWizardWindow.loop();
     }
@@ -1130,6 +1142,23 @@ void pleaseWaitWindow(){
   loadingGif.loop();
   please.loop();
   
+}
+GWindow pretextWindow;
+GTextField inPreField, inAfterField;
+void editPreTextWindow(){
+  pretextWindow = GWindow.getWindow(this, "Edit pre text", 400, 350, 600, 160, JAVA2D);
+  pretextWindow.noLoop();
+  pretextWindow.setActionOnClose(G4P.CLOSE_WINDOW);
+  pretextWindow.addDrawHandler(this, "pretextWindowHandler");  
+  inPreField = new GTextField(pretextWindow, 10, 20, 500, 20);
+  inPreField.setText(preText);
+  inAfterField = new GTextField(pretextWindow, 10, 65, 500, 20);
+  inAfterField.setText(afterText);
+  GButton saveMe = new GButton(pretextWindow, pretextWindow.width/2 - 200/2, 120, 200, 20);
+  saveMe.setOpaque(false);
+  saveMe.setText("save");
+  saveMe.addEventHandler(this,"saveMeHandler");
+  pretextWindow.loop();  
 }
 boolean numberOrNot(String input)
 {
