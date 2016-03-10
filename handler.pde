@@ -60,6 +60,19 @@ public void buttonPreviewVoiceHandler(GButton source, GEvent event) {
   //  System.out.println("File Not Found");
   //}
 }
+public void buttonPreviewConfig(GButton source, GEvent event) {
+  String pitch = inputPitch.getText();
+  String rate = inputRate.getText();
+  String vol = inputVolume.getText();
+  String textVoice = textPreviewConfig.getText();
+  textVoice = textVoice.replace(" ", "%20");
+  String u = "http://code.responsivevoice.org/getvoice.php?t=" 
+    +textVoice +"&tl=id&sv=&vn=&pitch=" +pitch +"&rate=" +rate +"&vol=" +vol;
+  String loc = sketchPath() +"/data/";
+  saveToFile(u, "previewvoice", loc);
+  player = minim.loadFile(loc +"previewvoice.mp3");
+  player.play();
+}
 public void buttonLoadSettingHandler(GButton source, GEvent event) {
   selectInput("Select a load setting file", "loadSettingLoaded");
 }

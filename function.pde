@@ -1,9 +1,10 @@
 GWindow voiceSettingWindow;
 GTextField inputPitch, inputRate, inputVolume;
+GTextArea textPreviewConfig;
 GButton buttonSaveConfig;
 //function
 public void voiceSetting() {
-  voiceSettingWindow = GWindow.getWindow(this, "Voice Tuning", 50, 100, 500, 140, JAVA2D); 
+  voiceSettingWindow = GWindow.getWindow(this, "Voice Tuning", 50, 100, 500, 240, JAVA2D); 
   voiceSettingWindow.noLoop();
   voiceSettingWindow.setActionOnClose(G4P.CLOSE_WINDOW);
   voiceSettingWindow.addDrawHandler(this, "win_drawVoiceSetting");
@@ -23,7 +24,17 @@ public void voiceSetting() {
   inputVolume.setOpaque(false);
   inputVolume.setFont(GuiUbu11);
 
-  buttonSaveConfig = new GButton(voiceSettingWindow, voiceSettingWindow.width/2-75, inputVolume.getY()+40, 150, 30);
+  textPreviewConfig = new GTextArea(voiceSettingWindow, 10, inputVolume.getY()+40, 480, 40, G4P.SCROLLBARS_NONE);
+  textPreviewConfig.setText("pemberhentian berikutnya, halte sarijadi, perhatikan barang bawaan anda dan hati hati melangkah, terimakasih");
+  textPreviewConfig.setFont(GuiUbu11);
+  textPreviewConfig.setEnabled(false);
+  
+  GButton buttonPreviewConfig = new GButton(voiceSettingWindow, voiceSettingWindow.width/2-75, inputVolume.getY()+100, 150, 30);
+  buttonPreviewConfig.setText("preview voice");
+  buttonPreviewConfig.setOpaque(false);
+  buttonPreviewConfig.addEventHandler(this, "buttonPreviewConfig");
+  
+  buttonSaveConfig = new GButton(voiceSettingWindow, voiceSettingWindow.width/2-75, inputVolume.getY()+140, 150, 30);
   buttonSaveConfig.setText("save configuration");
   buttonSaveConfig.setOpaque(false);
   buttonSaveConfig.addEventHandler(this, "buttonSaveVoiceConfiguration");

@@ -67,7 +67,7 @@ public void customGUI() {
   //buttonVoice.setFont(GuiUbu11);
   //buttonSD.setFont(GuiUbu11);
   //buttonExit.setFont(GuiUbu11);
-  GButton.useRoundCorners(false);
+  //GButton.useRoundCorners(false);
   mainGroup = new GGroup(this);
   mainGroup.addControls(buttonNew, buttonLoad, buttonVoice, buttonSD, buttonExit);
 }
@@ -155,8 +155,8 @@ synchronized public void win_drawVoiceSetting(PApplet appc, GWinData data) {
   appc.fill(0);
   textFont(ubu11);
   appc.text("Pitch (0 - 1) :", inputPitch.getX()-80, inputPitch.getY()+15);
-  appc.text("Pitch (0 - 1) :", inputRate.getX()-80, inputPitch.getY()+15);
-  appc.text("Pitch (0 - 1) :", inputVolume.getX()-80, inputPitch.getY()+15);
+  appc.text("Rate (0 - 1) :", inputRate.getX()-80, inputPitch.getY()+15);
+  appc.text("Volume (0 - 1) :", inputVolume.getX()-80, inputPitch.getY()+15);
   appc.textSize(10);
   appc.text(sketchPath() +"/data/voice.cfg", 0, appc.height-7);
 }
