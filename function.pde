@@ -28,12 +28,12 @@ public void voiceSetting() {
   textPreviewConfig.setText("pemberhentian berikutnya, halte sarijadi, perhatikan barang bawaan anda dan hati hati melangkah, terimakasih");
   textPreviewConfig.setFont(GuiUbu11);
   textPreviewConfig.setEnabled(false);
-  
+
   GButton buttonPreviewConfig = new GButton(voiceSettingWindow, voiceSettingWindow.width/2-75, inputVolume.getY()+100, 150, 30);
   buttonPreviewConfig.setText("preview voice");
   buttonPreviewConfig.setOpaque(false);
   buttonPreviewConfig.addEventHandler(this, "buttonPreviewConfig");
-  
+
   buttonSaveConfig = new GButton(voiceSettingWindow, voiceSettingWindow.width/2-75, inputVolume.getY()+140, 150, 30);
   buttonSaveConfig.setText("save configuration");
   buttonSaveConfig.setOpaque(false);
@@ -130,16 +130,16 @@ public void newSettingWizard() {
   newSettingWindow.setActionOnClose(G4P.CLOSE_WINDOW);
   newSettingWindow.addDrawHandler(this, "win_drawNewSetting");
   //page continue
-  inPreTemp = new GTextField(newSettingWindow, 10, 105, 360, 20, G4P.SCROLLBARS_NONE);
+  inPreTemp = new GTextField(newSettingWindow, 10, 140, 480, 20, G4P.SCROLLBARS_NONE);
   inPreTemp.setText(preText);
   inPreTemp.setFont(GuiUbu11);
-  inHal = new GTextField(newSettingWindow, 10, inPreTemp.getY()+25, 360, 20, G4P.SCROLLBARS_NONE);
+  inHal = new GTextField(newSettingWindow, 10, inPreTemp.getY()+25, 480, 20, G4P.SCROLLBARS_NONE);
   inHal.setText("halte kopo");
   inHal.setFont(GuiUbu11);
-  inAfterTemp = new GTextField(newSettingWindow, 10, inHal.getY()+25, 360, 20, G4P.SCROLLBARS_NONE);
+  inAfterTemp = new GTextField(newSettingWindow, 10, inHal.getY()+25, 480, 20, G4P.SCROLLBARS_NONE);
   inAfterTemp.setText(afterText);
   inAfterTemp.setFont(GuiUbu11);
-  buttonPreviewVoice = new GButton(newSettingWindow, 10, inAfterTemp.getY()+25, 90, 25);
+  buttonPreviewVoice = new GButton(newSettingWindow, 10, inAfterTemp.getY()+35, 90, 25);
   buttonPreviewVoice.setText("preview voice");
   buttonPreviewVoice.setOpaque(false);
   buttonPreviewVoice.addEventHandler(this, "buttonPreviewVoiceHandler");
@@ -269,6 +269,7 @@ void createListHalte() {
     }
   }
 }
+GCustomSlider sdr1;
 void createNewHalteWindow() {
   newHalteWindow = GWindow.getWindow(this, "edit halte", 120, 20, 500, 300, JAVA2D);
   newHalteWindow.noLoop();
@@ -286,9 +287,9 @@ void createNewHalteWindow() {
   GLabel[] labelHalteBack = new GLabel[myKoridor.get(slideNum-1).totalHalteBack];
 
   GTabManager tabHalte = new GTabManager();
-
+  int lastPosition = 0;
   for (int i=0; i<myKoridor.get(slideNum-1).totalHalteGo; i++) {
-    inputHalteGo[i] = new GTextField(newHalteWindow, 10, 20 + (i*40), 360, 20);
+    inputHalteGo[i] = new GTextField(newHalteWindow, 10, 20 + (i*40), 300, 20);
     inputHalteGo[i].setOpaque(false);
     inputHalteGo[i].setPromptText("input nama halte " +(i+1) +" (jalur pergi)");
     inputHalteGo[i].setFont(GuiUbu11);
@@ -304,7 +305,7 @@ void createNewHalteWindow() {
     tabHalte.addControl(inputHalteGo[i]);
   }
   for (int i=0; i<myKoridor.get(slideNum-1).totalHalteBack; i++) {
-    inputHalteBack[i] = new GTextField(newHalteWindow, 10, (60 + inputHalteGo[inputHalteGo.length-1].getY()) + (i*40), 360, 20);
+    inputHalteBack[i] = new GTextField(newHalteWindow, 10, (60 + inputHalteGo[inputHalteGo.length-1].getY()) + (i*40), 300, 20);
     inputHalteBack[i].setOpaque(false);
     inputHalteBack[i].setPromptText("input nama halte " +(i+1) +" (jalur pulang)");
     inputHalteBack[i].setFont(GuiUbu11);
@@ -318,6 +319,8 @@ void createNewHalteWindow() {
     panelHalte.addControl(inputHalteBack[i]);
     panelHalte.addControl(labelHalteBack[i]);
     tabHalte.addControl(inputHalteBack[i]);
+
+    lastPosition = int(inputHalteBack[i].getY());
   }
 
   GLabel labelKoridorTitle = new GLabel(newHalteWindow, newHalteWindow.width - 120, 10, 110, newHalteWindow.height - 60);
@@ -351,6 +354,17 @@ void createNewHalteWindow() {
 
   //add handler to the last input
   //inputHalteBack[myKoridor.get(slideNum-1).totalHalteBack-1].addEventHandler(this, "halteEnterHandler");
+  int currentPosition;
+  if ((lastPosition) > 300)
+    currentPosition = 300 - (lastPosition + 40);
+  else
+    currentPosition = 0;
+  sdr1 = new GCustomSlider(newHalteWindow, 395, 0, 300, 50, "blue18px ");
+  // show          opaque  ticks value limits
+  sdr1.setShowDecor(false, false, false, false);
+  sdr1.setEasing(15);
+  sdr1.setLimits(0, 0, currentPosition);
+  sdr1.setRotation(PI/2);
   newHalteWindow.loop();
 }
 GWindow newWriteToSDWindow;
@@ -516,32 +530,33 @@ public void nextButtonFuntion() {
       loadPreDataNewWizard3();
     }
   } else if (newSetSlideNum == 3) {
-    if (!newSettingFilePath.isEmpty() && newSettingFilePath != null) {
-      //save function
-      if (!inB[0].getText().isEmpty()) {
-        //add new data
-        if (textOutdoor.size() > 0)
-          textOutdoor.set(0, inB[0].getText());
-        else
-          textOutdoor.append(inB[0].getText());
+    selectOutput("Select a file to write to:", "fileSelected");
+    //if (!newSettingFilePath.isEmpty() && newSettingFilePath != null) {
+    //  //save function
+    //  if (!inB[0].getText().isEmpty()) {
+    //    //add new data
+    //    if (textOutdoor.size() > 0)
+    //      textOutdoor.set(0, inB[0].getText());
+    //    else
+    //      textOutdoor.append(inB[0].getText());
 
-        for (int i=1; i<5; i++) {
-          if (!inB[i].getText().isEmpty()) {
-            if (textOutdoor.size() > i)
-              textOutdoor.set(i, inB[i].getText());
-            else
-              textOutdoor.append(inB[i].getText());
-          }
-        }
-      }
-      saveTextFunction();
-      println(myKoridor.size());
-      newSettingWindow.close(); 
-      newSettingWindow = null;
-      println("saved to " +newSettingFilePath);
-    } else {
-      println("no path file");
-    }
+    //    for (int i=1; i<5; i++) {
+    //      if (!inB[i].getText().isEmpty()) {
+    //        if (textOutdoor.size() > i)
+    //          textOutdoor.set(i, inB[i].getText());
+    //        else
+    //          textOutdoor.append(inB[i].getText());
+    //      }
+    //    }
+    //  }
+    //  saveTextFunction();
+    //  println(myKoridor.size());
+    //  newSettingWindow.close(); 
+    //  newSettingWindow = null;
+    //  println("saved to " +newSettingFilePath);
+    //} else {
+    //  println("no path file");
+    //}
   }
 }
 public void backButtonFunction() {
@@ -609,6 +624,7 @@ GTextField[] me;
 GLabel[] labelMe;
 GButton[] butMe, delMe;
 GPanel groupLoadSettingWizard;
+GCustomSlider sdr2;
 int totalKor = 0;
 void loadSettingWizardLoaded(File selection) {
   if (selection == null) {
@@ -616,6 +632,7 @@ void loadSettingWizardLoaded(File selection) {
   } else {
     loadSettingWizardPath = selection.getAbsolutePath();
     int korCount = 0; 
+    int lastPosition = 0;
     boolean change = false;
     if (!loadSettingWizardPath.isEmpty()) {
       String lines[] = loadStrings(loadSettingWizardPath);
@@ -655,7 +672,7 @@ void loadSettingWizardLoaded(File selection) {
             preText = list[j];
           } else if (i == lines.length-1 && j == 1) {
             afterText = list[j];
-          }else {
+          } else {
             if ( i % 2 == 0 && j == 1) {
               if (!change) {
                 myKoridor.get(korCount).totalHalteGo = int(list[j]);
@@ -719,12 +736,12 @@ void loadSettingWizardLoaded(File selection) {
       delMe = new GButton[korNum];
 
       for (int i=0; i<me.length; i++) {
-        labelMe[i] = new GLabel(loadSettingWizardWindow, 10, 10 +(i*50), 200, 20);
+        labelMe[i] = new GLabel(loadSettingWizardWindow, 10, 10 +(i*50), 170, 20);
         labelMe[i].setOpaque(false);
         labelMe[i].setTextAlign(GAlign.LEFT, GAlign.MIDDLE);
         labelMe[i].setText("Koridor " +(i+1));
 
-        me[i] = new GTextField(loadSettingWizardWindow, 10, 30 +(i*50), 200, 20);
+        me[i] = new GTextField(loadSettingWizardWindow, 10, 30 +(i*50), 170, 20);
         me[i].setOpaque(true);
         me[i].setText("koridor " +myKoridor.get(i).namaKoridor);
         me[i].setTextEditEnabled(false);
@@ -742,6 +759,7 @@ void loadSettingWizardLoaded(File selection) {
         delMe[i].tagNo = i;
 
         groupLoadSettingWizard.addControls(me[i], butMe[i], delMe[i], labelMe[i]);
+        lastPosition = int(me[i].getY());
       }     
 
       GButton buttonSaveLoadSettingWizard = new GButton(loadSettingWizardWindow, loadSettingWizardWindow.width-120, loadSettingWizardWindow.height-60, 100, 35);
@@ -769,23 +787,37 @@ void loadSettingWizardLoaded(File selection) {
       buttonPreTextLoadSettingWizard.setText("edit pre text");
       buttonPreTextLoadSettingWizard.addEventHandler(this, "buttonPreTextLoadSettingWizardHandler");
 
+      int currentPosition;
+      if ((lastPosition) > 300)
+        currentPosition = 300 - (lastPosition + 40);
+      else
+        currentPosition = 0;
+      sdr2 = new GCustomSlider(loadSettingWizardWindow, 375, 0, 300, 50, "blue18px ");
+      // show          opaque  ticks value limits
+      sdr2.setShowDecor(false, false, false, false);
+      sdr2.setEasing(15);
+      sdr2.setLimits(0, 0, currentPosition);
+      sdr2.setRotation(PI/2);
+
       loadSettingWizardWindow.loop();
     }
   }
 }
 void refreshLoadWizard() {
   loadSettingWizardWindow.noLoop();
+  sdr2.dispose();
   me = new GTextField[korNum];
   labelMe = new GLabel[korNum];
   butMe = new GButton[korNum]; 
   delMe = new GButton[korNum];
+  int lastPosition = 0;
   for (int i=0; i<korNum; i++) {
-    labelMe[i] = new GLabel(loadSettingWizardWindow, 10, 10 +(i*50), 200, 20);
+    labelMe[i] = new GLabel(loadSettingWizardWindow, 10, 10 +(i*50), 170, 20);
     labelMe[i].setOpaque(false);
     labelMe[i].setTextAlign(GAlign.LEFT, GAlign.MIDDLE);
     labelMe[i].setText("Koridor " +(i+1));
 
-    me[i] = new GTextField(loadSettingWizardWindow, 10, 30 +(i*50), 200, 20);
+    me[i] = new GTextField(loadSettingWizardWindow, 10, 30 +(i*50), 170, 20);
     me[i].setOpaque(true);
     me[i].setText("koridor " +myKoridor.get(i).namaKoridor);
     me[i].setTextEditEnabled(false);
@@ -803,7 +835,19 @@ void refreshLoadWizard() {
     delMe[i].tagNo = i;
 
     groupLoadSettingWizard.addControls(me[i], butMe[i], delMe[i], labelMe[i]);
+    lastPosition = int(me[i].getY());
   }
+  int currentPosition;
+  if ((lastPosition) > 300)
+    currentPosition = 300 - (lastPosition + 40);
+  else
+    currentPosition = 0;
+  sdr2 = new GCustomSlider(loadSettingWizardWindow, 375, 0, 300, 50, "blue18px ");
+  // show          opaque  ticks value limits
+  sdr2.setShowDecor(false, false, false, false);
+  sdr2.setEasing(15);
+  sdr2.setLimits(0, 0, currentPosition);
+  sdr2.setRotation(PI/2);
   loadSettingWizardWindow.loop();
 }
 GWindow editHalteAndKoridorWindow;
@@ -832,7 +876,8 @@ public void editHalteAndKoridor(int i) {
   myLabelField = new GLabel[total];
   delMyField = new GButton[total];
   int space = 50; 
-  int field = 250; int lastPosition = 0;
+  int field = 250; 
+  int lastPosition = 0;
   for (int j=0; j<total; j++) {
     if (j == 0) {
       myField[j] = new GTextField(editHalteAndKoridorWindow, 10, 30+(j*space), field, 20);
@@ -884,17 +929,17 @@ public void editHalteAndKoridor(int i) {
       lastPosition = int(myField[j].getY());
     }
   }
-  
+
   int currentPosition;
-  if((lastPosition) > 300)
-  currentPosition = 300 - (lastPosition + 40);
+  if ((lastPosition) > 300)
+    currentPosition = 300 - (lastPosition + 40);
   else
-  currentPosition = 0;
+    currentPosition = 0;
   sdr3 = new GCustomSlider(editHalteAndKoridorWindow, 375, 0, 300, 50, "blue18px ");
   // show          opaque  ticks value limits
-  sdr3.setShowDecor(false, true, false, false);
+  sdr3.setShowDecor(false, false, false, false);
   sdr3.setEasing(15);
-  sdr3.setLimits(0,0,currentPosition);
+  sdr3.setLimits(0, 0, currentPosition);
   sdr3.setRotation(PI/2);
 
   GButton addMyButton = new GButton(editHalteAndKoridorWindow, editHalteAndKoridorWindow.width-120, 20, 100, 35);
@@ -941,7 +986,8 @@ void refreshEditHalteAndKoridor() {
   myLabelField = new GLabel[total];
   delMyField = new GButton[total];
   int space = 50; 
-  int field = 250; int lastPosition = 0;
+  int field = 250; 
+  int lastPosition = 0;
   println(total);
   for (int j=0; j<total; j++) {
     if (j > 0 && j<=totalHalteGo) {
@@ -982,17 +1028,17 @@ void refreshEditHalteAndKoridor() {
     }
   }
   sdr3.dispose();
-  editHalteAndKoridorPanel.moveTo(0,0);
+  editHalteAndKoridorPanel.moveTo(0, 0);
   int currentPosition;
-  if((lastPosition) > 300)
-  currentPosition = 300 - (lastPosition + 40);
+  if ((lastPosition) > 300)
+    currentPosition = 300 - (lastPosition + 40);
   else
-  currentPosition = 0;
+    currentPosition = 0;
   sdr3 = new GCustomSlider(editHalteAndKoridorWindow, 375, 0, 300, 50, "blue18px ");
   // show          opaque  ticks value limits
-  sdr3.setShowDecor(false, true, false, false);
+  sdr3.setShowDecor(false, false, false, false);
   sdr3.setEasing(15);
-  sdr3.setLimits(0,0,currentPosition);
+  sdr3.setLimits(0, 0, currentPosition);
   sdr3.setRotation(PI/2);
   editHalteAndKoridorWindow.loop();
 }
@@ -1169,18 +1215,17 @@ public void saveToFile(String u, String filename, String pathFileMp3) {
 }
 GWindow please;
 Gif loadingGif;
-void pleaseWaitWindow(){
+void pleaseWaitWindow() {
   please = GWindow.getWindow(this, "please wait", 400, 350, 300, 160, JAVA2D);
   please.noLoop();
   please.setActionOnClose(G4P.CLOSE_WINDOW);
   please.addDrawHandler(this, "pleaseWindowHandler");  
   loadingGif.loop();
   please.loop();
-  
 }
 GWindow pretextWindow;
 GTextField inPreField, inAfterField;
-void editPreTextWindow(){
+void editPreTextWindow() {
   pretextWindow = GWindow.getWindow(this, "Edit pre text", 400, 350, 600, 160, JAVA2D);
   pretextWindow.noLoop();
   pretextWindow.setActionOnClose(G4P.CLOSE_WINDOW);
@@ -1192,8 +1237,8 @@ void editPreTextWindow(){
   GButton saveMe = new GButton(pretextWindow, pretextWindow.width/2 - 200/2, 120, 200, 20);
   saveMe.setOpaque(false);
   saveMe.setText("save");
-  saveMe.addEventHandler(this,"saveMeHandler");
-  pretextWindow.loop();  
+  saveMe.addEventHandler(this, "saveMeHandler");
+  pretextWindow.loop();
 }
 boolean numberOrNot(String input)
 {

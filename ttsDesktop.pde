@@ -93,7 +93,7 @@ synchronized public void win_drawNewSetting(PApplet appc, GWinData data) {
 
   if (newSetSlideNum == 0) {
     appc.text("Input total koridor :", 10, 60);
-    appc.text("Template suara pemberhentian halte ", 10, 100);
+    appc.text("Template suara pemberhentian halte ", 10, 130);
   } else if (newSetSlideNum == 1) {
     appc.text("Input nama koridor " +slideNum, 10, 60);
     appc.text("Total halte (jalur pergi) == Total halte (jalur pulang) ?", 10, 110);
@@ -317,7 +317,7 @@ public void GUINewSetSlideNum3() {
       if (i>0)
         inB[i].setPromptText("input text outdoor "+i +" (optional)");
     }
-    buttonBrowse.setVisible(true);
+    buttonBrowse.setVisible(false);
     inPreTemp.setVisible(false);
     inAfterTemp.setVisible(false);
     inHal.setVisible(false);

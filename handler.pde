@@ -308,6 +308,34 @@ void fileSelected(File selection) {
   } else {
     browsed = true;
     newSettingFilePath = selection.getAbsolutePath();
+    if (!newSettingFilePath.isEmpty() && newSettingFilePath != null) {
+      //save function
+      if (!inB[0].getText().isEmpty()) {
+        //add new data
+        if (textOutdoor.size() > 0)
+          textOutdoor.set(0, inB[0].getText());
+        else
+          textOutdoor.append(inB[0].getText());
+
+        for (int i=1; i<5; i++) {
+          if (!inB[i].getText().isEmpty()) {
+            if (textOutdoor.size() > i)
+              textOutdoor.set(i, inB[i].getText());
+            else
+              textOutdoor.append(inB[i].getText());
+          }
+        }
+      }
+      saveTextFunction();
+      println(myKoridor.size());
+      JOptionPane.showMessageDialog(null, "saved to " +newSettingFilePath, "save path", JOptionPane.WARNING_MESSAGE);
+      newSettingWindow.close(); 
+      newSettingWindow = null;
+      println("saved to " +newSettingFilePath);    
+    } else {
+      println("no path file");
+      JOptionPane.showMessageDialog(null, "no path file ", "save path", JOptionPane.WARNING_MESSAGE);
+    }
   }
 }
 public void butMeButtonHandler(GButton source, GEvent event) {
@@ -551,8 +579,14 @@ public void editHalteAndKoridorWindowMouseHandler(PApplet app, GWinData data, Mo
 }
 //slider
 public void handleSliderEvents(GValueControl slider, GEvent event) { 
-  if (slider == sdr3 || event == event.VALUE_CHANGING){
-  println(sdr3.getValueS() + "    " + event); 
-  editHalteAndKoridorPanel.moveTo(0, float(sdr3.getValueS()));
+  if (slider == sdr3) {
+    //println(sdr3.getValueS() + "    " + event); 
+    editHalteAndKoridorPanel.moveTo(0, float(sdr3.getValueS()));
+  }
+  if (slider == sdr2) {
+    groupLoadSettingWizard.moveTo(0, float(sdr2.getValueS()));
+  }
+  if (slider == sdr1) {
+    panelHalte .moveTo(0, float(sdr1.getValueS()));
   }
 }
