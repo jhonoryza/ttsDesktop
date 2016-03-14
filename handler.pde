@@ -545,6 +545,14 @@ public void loadSettingWizardWindowMouseHandler(PApplet app, GWinData data, Mous
 }
 public void editHalteAndKoridorWindowMouseHandler(PApplet app, GWinData data, MouseEvent mevent) {
   if (mevent.getAction() == MouseEvent.WHEEL) {
-    editHalteAndKoridorPanel.moveTo(0, editHalteAndKoridorPanel.getY() +(10*mevent.getCount()));
+    //editHalteAndKoridorPanel.moveTo(0, editHalteAndKoridorPanel.getY() +(10*mevent.getCount()));
+    //sdr3.setValue(30);
+  }
+}
+//slider
+public void handleSliderEvents(GValueControl slider, GEvent event) { 
+  if (slider == sdr3 || event == event.VALUE_CHANGING){
+  println(sdr3.getValueS() + "    " + event); 
+  editHalteAndKoridorPanel.moveTo(0, float(sdr3.getValueS()));
   }
 }

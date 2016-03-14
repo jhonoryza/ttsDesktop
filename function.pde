@@ -812,6 +812,7 @@ GTextField[] myField;
 GButton[] delMyField;
 GLabel[] myLabelField;
 int currentHal = 0;
+GCustomSlider sdr3;
 public void editHalteAndKoridor(int i) {
   currentHal = i;
   //create UI
@@ -831,7 +832,7 @@ public void editHalteAndKoridor(int i) {
   myLabelField = new GLabel[total];
   delMyField = new GButton[total];
   int space = 50; 
-  int field = 250;
+  int field = 250; int lastPosition = 0;
   for (int j=0; j<total; j++) {
     if (j == 0) {
       myField[j] = new GTextField(editHalteAndKoridorWindow, 10, 30+(j*space), field, 20);
@@ -880,12 +881,21 @@ public void editHalteAndKoridor(int i) {
       delMyField[j].addEventHandler(this, "delMyFieldHandler");
       delMyField[j].tagNo = j;
       editHalteAndKoridorPanel.addControls(myField[j], myLabelField[j], delMyField[j]);
+      lastPosition = int(myField[j].getY());
     }
   }
-  //GButton myButton = new GButton(editHalteAndKoridorWindow, editHalteAndKoridorWindow.width-120, editHalteAndKoridorWindow.height-60, 100, 35);
-  //myButton.setOpaque(false);
-  //myButton.setText("save");
-  //myButton.addEventHandler(this, "myButtonHandler");
+  
+  int currentPosition;
+  if((lastPosition) > 300)
+  currentPosition = 300 - (lastPosition + 40);
+  else
+  currentPosition = 0;
+  sdr3 = new GCustomSlider(editHalteAndKoridorWindow, 375, 0, 300, 50, "blue18px ");
+  // show          opaque  ticks value limits
+  sdr3.setShowDecor(false, true, false, false);
+  sdr3.setEasing(15);
+  sdr3.setLimits(0,0,currentPosition);
+  sdr3.setRotation(PI/2);
 
   GButton addMyButton = new GButton(editHalteAndKoridorWindow, editHalteAndKoridorWindow.width-120, 20, 100, 35);
   addMyButton.setOpaque(false);
@@ -931,7 +941,7 @@ void refreshEditHalteAndKoridor() {
   myLabelField = new GLabel[total];
   delMyField = new GButton[total];
   int space = 50; 
-  int field = 250;
+  int field = 250; int lastPosition = 0;
   println(total);
   for (int j=0; j<total; j++) {
     if (j > 0 && j<=totalHalteGo) {
@@ -968,8 +978,22 @@ void refreshEditHalteAndKoridor() {
       delMyField[j].addEventHandler(this, "delMyFieldHandler");
       delMyField[j].tagNo = j;
       editHalteAndKoridorPanel.addControls(myField[j], myLabelField[j], delMyField[j]);
+      lastPosition = int(myField[j].getY());
     }
   }
+  sdr3.dispose();
+  editHalteAndKoridorPanel.moveTo(0,0);
+  int currentPosition;
+  if((lastPosition) > 300)
+  currentPosition = 300 - (lastPosition + 40);
+  else
+  currentPosition = 0;
+  sdr3 = new GCustomSlider(editHalteAndKoridorWindow, 375, 0, 300, 50, "blue18px ");
+  // show          opaque  ticks value limits
+  sdr3.setShowDecor(false, true, false, false);
+  sdr3.setEasing(15);
+  sdr3.setLimits(0,0,currentPosition);
+  sdr3.setRotation(PI/2);
   editHalteAndKoridorWindow.loop();
 }
 public void saveTemporary() {
